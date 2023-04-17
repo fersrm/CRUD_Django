@@ -1,0 +1,45 @@
+{% load static %}
+<nav>
+    <div class="logo-details">
+      <i class="fa-solid fa-fish"></i>
+      <span class="logo_name">Bazar</span>
+    </div>
+    <ul class="nav-links">
+      <li class="{% if request.path == '/' %}activo{% endif %}">
+        <a href="{% url 'Home' %}">
+          <i class="fa-solid fa-house"></i>
+          <span class="link_name">Inicio</span>
+        </a>
+      </li>
+      <li class="{% if request.path == '/tienda/' %}activo{% endif %}">
+        <div class="iocn-link">
+          <a href="{% url 'Tienda' %}">
+            <i class="fa-sharp fa-solid fa-box"></i>
+            <span class="link_name">Productos</span>
+          </a>
+        </div>
+      </li>
+      <li class="{% if request.path == '/pagos/' %}activo{% endif %}">
+        <div class="iocn-link">
+          <a href="{% url 'Pagos' %}">
+            <i class="fa-solid fa-money-bills"></i>
+            <span class="link_name">Ventas</span>
+          </a>
+        </div>
+      </li>
+      <li>
+        <div class="profile-details">
+          <div class="profile-content">
+            <img src="{% static 'ProyecBazarApp/img/profile.jpg' %}" alt="profileImg">
+          </div>
+          <div class="name-job">
+            <div class="profile_name">{{ user.first_name }}</div>
+            <div class="job">{{ user.rol_FK }}</div>
+          </div>
+          <a href="{% url 'salir' %}">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </a>
+        </div>
+      </li>
+    </ul>
+</nav>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Bazar Mona</title>
+    <link rel="stylesheet" href="{% static 'ProyecBazarApp/css/style.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/96d8be8550.js" crossorigin="anonymous"></script>
+  </head>
+<body>
+  <header class="sidebar close">
+    {% include 'ProyecBazarApp/include/navbar.html' %}
+  </header>
+  <main class="home-section">
+    <div class="home-content">
+      {% include 'ProyecBazarApp/include/hambur.html' %}
+    <!-- encabezado dinamico -->
+    {% block head %}
+    
+    {% endblock %}
+    <!-- contenido dinamico -->
+    </div>
+    <!-- contenido dinamico -->
+    {% block content %}
+
+    {% endblock %}
+    <!-- contenido dinamico -->
+  </main>
+  <script src="{% static 'ProyecBazarApp/js/script.js' %}"></script>
+</body>
+</html>

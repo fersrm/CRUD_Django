@@ -1,0 +1,29 @@
+{% extends "ProyecBazarApp/base.html" %}
+
+{% block head %}
+  <span class="text">Dashboard Bazar</span>
+{% endblock %}
+
+{% block content %}
+
+  <div class="container">
+    <div class="cartas">
+        <div class="card">Factura</div>
+        <div class="card">Boleta</div>
+        <div class="card">General</div>
+    </div>
+    <form class="info_empresa">
+        <div class="input">
+            <input type="text">
+            <label for="">nombre</label>
+            <input type="text">
+            <label for="">nombre</label>
+            <input type="text">
+            <label for="">nombre</label>
+            <input type="text">
+        </div>
+        <button type="submit">Enviar</button>
+    </form>
+  </div>
+  
+{%endblock %}

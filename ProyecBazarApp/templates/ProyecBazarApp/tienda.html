@@ -1,0 +1,36 @@
+{% extends "ProyecBazarApp/base.html" %}
+
+{% block head %}
+  <div class="barra_busqueda">
+    <span class="text">Tienda</span>
+    {% include 'ProyecBazarApp/include/buscador.html' %}
+  </div>
+{% endblock %}
+
+{% block content %}
+
+  <div class="container containerIMG">
+
+  {% for producto in productos %}
+  
+    <div class="carta_producto">
+      <img src="{{producto.imagen.url}}" alt="{{producto.nombre_producto}}">
+      <div class="info_producto">
+          <span class="codigo">{{producto.codigo_producto}}</span>
+          <span class="nombre_producto">{{producto.nombre_producto}}</span>
+          <p>Categoria</p>
+          <span class="categoria">{{producto.categoria_FK}}</span>
+          <p>Marca</p>
+          <span class="marca">{{producto.marca_FK}}</span>
+      </div>
+      <div class="valor">
+          <strong>$ {{producto.precio_producto}}</strong>
+      </div>
+    </div>
+
+  {% endfor %}
+
+  </div>
+
+{%endblock %}
+
