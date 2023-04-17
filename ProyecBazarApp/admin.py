@@ -72,6 +72,7 @@ admin.site.register(Boletas, generate_admin(Boletas, 'usuario_FK'))
 
 #-----------------PRODUCTOS------------------------------------------------------------------------------------------------------
 class ProducAdmin(admin.ModelAdmin):
+    readonly_fields = ('usuario_FK',)
 
     def marca(self, obj):
             return getattr(obj, 'marca_FK')

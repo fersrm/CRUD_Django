@@ -75,7 +75,7 @@ class Producto(models.Model):
     precio_producto = models.IntegerField()
     imagen = models.ImageField(upload_to='productos')
     marca_FK = models.ForeignKey(Marca, on_delete=models.CASCADE)
-    usuario_FK = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    usuario_FK = models.ForeignKey(Usuario, on_delete=models.CASCADE,default=4)
     categoria_FK = models.ForeignKey(Categoria, on_delete=models.CASCADE)
 
     def __str__(self):
