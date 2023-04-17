@@ -220,14 +220,30 @@
 }
 /*-------------INICIO----------------*/
 .cartas{
-  border: 1px solid green;
   display: flex;
   justify-content: space-between;
 }
 .card{
-  background-color: aqua;
-  width: 30%;
-  height: 50px;
+  width: 25%;
+  height: auto;
+  padding: 1rem;
+  border-radius: 5px;
+  box-shadow:0 0 5px 3px #2524243b;
+  cursor: pointer;
+  transform: scale(1);
+  transition: transform 0.3s;
+}
+.card:hover{
+  background-color: var(--fondomenu2);
+  color: var(--blanco);
+  transform: scale(1.08);
+}
+.card_titulo,.card_cuerpo{
+  display: flex;
+  justify-content: space-between;
+}
+.card_cuerpo{
+  margin-top: 0.5rem;
 }
 form{
   border: 1px solid black;
