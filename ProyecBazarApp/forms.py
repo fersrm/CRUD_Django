@@ -9,3 +9,8 @@ class ProductoForm(forms.ModelForm):
             'marca_FK': 'Marca',
             'categoria_FK': 'Categoria'
         }
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data['codigo_producto'] = cleaned_data['codigo_producto'].upper()
+        cleaned_data['nombre_producto'] = cleaned_data['nombre_producto'].upper()
+        return cleaned_data

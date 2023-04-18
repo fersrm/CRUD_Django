@@ -12,6 +12,7 @@ def home(request):
         form = ProductoForm(request.POST, request.FILES)
         if form.is_valid():
             # Guardar el nuevo producto en la base de datos
+            form.clean() #transforma a mayuscula
             form.save()
             # Redireccionar al usuario a otra página
             return redirect('Tienda')
