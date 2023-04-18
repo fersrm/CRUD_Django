@@ -5,9 +5,45 @@
 {% endblock %}
 
 {% block content %}
+<table border="1px">
+  <thead>
+    <tr>
+      <th>Código</th>
+      <th>Nombre</th>
+      <th>Precio</th>
+      <th>Marca</th>
+      <th>Categoría</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for producto in page_obj %}
+    <tr>
+      <td>{{ producto.codigo_producto }}</td>
+      <td>{{ producto.nombre_producto }}</td>
+      <td>{{ producto.precio_producto }}</td>
+      <td>{{ producto.marca_FK }}</td>
+      <td>{{ producto.categoria_FK }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
 
-  <div class="container">
-    <h1>Pagos</h1>
-  </div>
-  
+<div class="pagination">
+  <span class="step-links">
+      {% if page_obj.has_previous %}
+          <a href="?page=1">&laquo; Primero</a>
+          <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+      {% endif %}
+
+      <span class="current-page">
+          Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+      </span>
+
+      {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+          <a href="?page={{ page_obj.paginator.num_pages }}">Último &raquo;</a>
+      {% endif %}
+  </span>
+</div>
+
 {%endblock %}

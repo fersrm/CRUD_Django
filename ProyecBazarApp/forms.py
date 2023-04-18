@@ -9,8 +9,20 @@ class ProductoForm(forms.ModelForm):
             'marca_FK': 'Marca',
             'categoria_FK': 'Categoria'
         }
+
     def clean(self):
         cleaned_data = super().clean()
-        cleaned_data['codigo_producto'] = cleaned_data['codigo_producto'].upper()
-        cleaned_data['nombre_producto'] = cleaned_data['nombre_producto'].upper()
+        nombre_producto = cleaned_data.get('nombre_producto')
+        codigo_producto = cleaned_data.get('codigo_producto')
+
+        # por si quiere agregar un mensaje adicional     
+        # if not nombre_producto:
+        #     self.add_error('nombre_producto', 'El campo Nombre de Producto es requerido.')
+        # elif not codigo_producto:
+        #     self.add_error('codigo_producto', 'El campo Código de Producto es requerido.')
+
+        if nombre_producto and codigo_producto:
+            cleaned_data['nombre_producto'] = nombre_producto.upper()
+            cleaned_data['codigo_producto'] = codigo_producto.upper()
+
         return cleaned_data

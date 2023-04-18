@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from .models import Producto
 from django.db.models import Q
 from .forms import ProductoForm
+from django.core.paginator import Paginator
 
 # Create your views here.
 @login_required(login_url='/login/')
@@ -44,8 +45,17 @@ def tienda(request):
 
 @login_required(login_url='/login/')
 def pagos(request):
-    return render(request,"ProyecBazarApp/pagos.html")
+    productos = Producto.objects.all()
+    paginator = Paginator(productos, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'ProyecBazarApp/pagos.html', {'page_obj': page_obj})
 
 def salir(request):
     logout(request)
     return redirect('/')
+
+
+
+
+
