@@ -38,18 +38,16 @@
         </div>
       </div>
     </div>
-    <form class="info_empresa">
-        <div class="input">
-            <input type="text">
-            <label for="">nombre</label>
-            <input type="text">
-            <label for="">nombre</label>
-            <input type="text">
-            <label for="">nombre</label>
-            <input type="text">
-        </div>
-        <button type="submit">Enviar</button>
+    <form method="post" class="add_produc" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form }}
+      <input type="submit" value="Agregar Producto">
     </form>
+    {% if error_message %}
+    <div class="alert-login">{{ error_message }}</div>
+    {% endif %}
   </div>
+ 
+
   
 {%endblock %}

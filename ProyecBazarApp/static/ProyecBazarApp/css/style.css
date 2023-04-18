@@ -6,6 +6,7 @@
   --fondoPerfil:#1d1b31;
   --fondomenu2:#4c4786;
   --valor:#ff0000;
+  --sombra:0 0 5px 3px #2524243b;
 }
 *{
   margin: 0;
@@ -228,7 +229,7 @@
   height: auto;
   padding: 1rem;
   border-radius: 5px;
-  box-shadow:0 0 5px 3px #2524243b;
+  box-shadow:var(--sombra);
   cursor: pointer;
   transform: scale(1);
   transition: transform 0.3s;
@@ -245,15 +246,39 @@
 .card_cuerpo{
   margin-top: 0.5rem;
 }
-form{
-  border: 1px solid black;
+/*-----------formulario agregar producto------------*/
+.add_produc{
+  box-shadow: var(--sombra);
+  border-radius: 5px;
   padding: 1rem;
   margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  width: 50%;
 }
-button{
+.add_produc ul{
+  display: none;
+}
+.add_produc label{
+  margin-top: 5px;
+  margin-bottom:5px ;
+}
+.add_produc input{
+  width: 100%;
+}
+.add_produc input[type="file"]{
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+.add_produc input[type="submit"]{
   margin-top: 1rem;
+  cursor: pointer;
+} 
+.add_produc select{
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  cursor: pointer;
 }
-
 /*-----------TIENDA---------------------*/
 .containerIMG{
   display: grid;
