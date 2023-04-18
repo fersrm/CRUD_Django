@@ -43,9 +43,18 @@ def tienda(request):
     context = {"productos":productos}
     return render(request,"ProyecBazarApp/tienda.html",context)
 
+#-------------------------------------------cambiar por informe mas adelante ------------------------------------
 @login_required(login_url='/login/')
 def pagos(request):
+    busqueda = request.GET.get('buscar')
     productos = Producto.objects.all()
+    if busqueda:
+        productos = Producto.objects.filter(
+            Q(nombre_producto__icontains = busqueda) |
+            Q(codigo_producto__icontains = busqueda) |
+            Q(marca_FK__nombre_marca__icontains = busqueda) |
+            Q(categoria_FK__nombre_categoria__icontains = busqueda) 
+    ).distinct()
     paginator = Paginator(productos, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -54,7 +63,6 @@ def pagos(request):
 def salir(request):
     logout(request)
     return redirect('/')
-
 
 
 

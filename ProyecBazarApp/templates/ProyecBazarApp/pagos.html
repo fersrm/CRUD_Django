@@ -1,49 +1,55 @@
 {% extends "ProyecBazarApp/base.html" %}
 
 {% block head %}
-  <span class="text">Pagos</span>
+  <div class="barra_busqueda">
+    <span class="text">Pagos</span>
+    {% include 'ProyecBazarApp/include/buscador.html' %}
+  </div>
 {% endblock %}
 
 {% block content %}
-<table border="1px">
-  <thead>
-    <tr>
-      <th>Código</th>
-      <th>Nombre</th>
-      <th>Precio</th>
-      <th>Marca</th>
-      <th>Categoría</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for producto in page_obj %}
-    <tr>
-      <td>{{ producto.codigo_producto }}</td>
-      <td>{{ producto.nombre_producto }}</td>
-      <td>{{ producto.precio_producto }}</td>
-      <td>{{ producto.marca_FK }}</td>
-      <td>{{ producto.categoria_FK }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-
-<div class="pagination">
-  <span class="step-links">
-      {% if page_obj.has_previous %}
-          <a href="?page=1">&laquo; Primero</a>
-          <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
-      {% endif %}
-
-      <span class="current-page">
-          Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
-      </span>
-
-      {% if page_obj.has_next %}
-          <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
-          <a href="?page={{ page_obj.paginator.num_pages }}">Último &raquo;</a>
-      {% endif %}
-  </span>
+<div class="container">
+  <table border="1px">
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Nombre</th>
+        <th>Precio</th>
+        <th>Marca</th>
+        <th>Categoría</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for producto in page_obj %}
+      <tr>
+        <td>{{ producto.codigo_producto }}</td>
+        <td>{{ producto.nombre_producto }}</td>
+        <td>{{ producto.precio_producto }}</td>
+        <td>{{ producto.marca_FK }}</td>
+        <td>{{ producto.categoria_FK }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+  <div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; Primero</a>
+            <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+        {% endif %}
+  
+        <span class="current-page">
+            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+        </span>
+  
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">Último &raquo;</a>
+        {% endif %}
+    </span>
+  </div>
+  <div class="export-pdf">
+    <button id="btn-preview">Previsualizar en HTML</button>
+  </div>
 </div>
-
-{%endblock %}
