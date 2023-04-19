@@ -45,7 +45,11 @@ class CustomUserAdmin(UserAdmin):
         (None, {'fields': ('first_name', 'last_name', 'email', 'rol_FK')}),
         ('Informacion', {'fields': ('username', 'password',)}),
         ('Permisos', {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
-    #    ('Fechas importantes', {'fields': ('last_login', 'date_joined')}),
+       #('Fechas importantes', {'fields': ('last_login', 'date_joined')}),
+        ('Advanced options', {
+            'classes':('collapse','wide','extrapretty'),
+            'fields': ('groups','user_permissions',)}),
+ 
     )
     # lo que se muestra al listar usuarios
     list_display = ('username', 'first_name', 'last_name','email', 'rol_FK','is_staff')
