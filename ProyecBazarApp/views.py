@@ -67,7 +67,7 @@ def pagos(request):
             Q(categoria_FK__nombre_categoria__icontains=busqueda)
         ).distinct()
     # Paginación de resultados
-    paginator = Paginator(productos, 5)
+    paginator = Paginator(productos,5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -118,13 +118,17 @@ def salir(request):
 def vita_facturas(request):
     # Búsqueda de facturas
     busqueda = request.GET.get('buscar')
+    busquedaF = request.GET.get('buscarFecha')
     facturas = Facturas.objects.all()
     if busqueda:
         facturas = Facturas.objects.filter(
             Q(id_factura=busqueda) |
-        #    Q(fecha_emision=busqueda) |
             Q(total_factura=busqueda) |
             Q(usuario_FK__username=busqueda) 
+        ).distinct()
+    elif busquedaF:
+        facturas = Facturas.objects.filter(
+            Q(fecha_emision__icontains=busquedaF) 
         ).distinct()
     # Paginación de resultados
     paginator = Paginator(facturas, 5)
@@ -171,14 +175,18 @@ def vita_facturas(request):
 def vita_boletas(request):
     # Búsqueda de boletas
     busqueda = request.GET.get('buscar')
+    busquedaB = request.GET.get('buscarFecha')
     boletas = Boletas.objects.all()
     if busqueda:
         boletas = Boletas.objects.filter(
             Q(id_boleta=busqueda) |
-        #    Q(fecha_emision=busqueda) |
             Q(total_boleta=busqueda) |
             Q(usuario_FK__username=busqueda) 
         ).distinct()
+    elif busquedaB:
+        boletas = Boletas.objects.filter(
+            Q(fecha_emision__icontains=busquedaB) 
+    ).distinct()
     # Paginación de resultados
     paginator = Paginator(boletas, 5)
     page_number = request.GET.get('page')

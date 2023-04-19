@@ -367,6 +367,9 @@
 .barra_busqueda button:hover{
   background-color:var(--fondomenu2);
 }
+.calendario{
+  margin-left: 4rem;
+}
 /*-----------------------TABLA--------------------------*/
 table {
   width: 100%;
