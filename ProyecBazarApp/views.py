@@ -1,15 +1,19 @@
+# Librerías de Django
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
-from django.shortcuts import render, redirect
-from .models import Producto
-from django.db.models import Q
-from .forms import ProductoForm
 from django.core.paginator import Paginator
-#para el pdf
+from django.db.models import Q
+from django.shortcuts import render, redirect
+
+# Modelos y formularios
+from .forms import ProductoForm
+from .models import Producto
+
+# Librerías para generar PDF
 import os
+import pdfkit
 import tempfile
 import webbrowser
-import pdfkit
 
 # Create your views here.
 @login_required(login_url='/login/')
@@ -24,14 +28,14 @@ def home(request):
             return redirect('Tienda')
     else:
         form = ProductoForm()
-
-      # Aquí agregamos el mensaje de error en caso de que el formulario no sea válido
+        # Aquí agregamos el mensaje de error en caso de que el formulario no sea válido
     if not form.is_valid():
         error_message = form.errors
     else:
         error_message = "valido"
-
-    return render(request, 'ProyecBazarApp/home.html', {'form': form, 'error_message': error_message})
+    # Renderizado de la plantilla
+    context = {'form': form, 'error_message': error_message}
+    return render(request, 'ProyecBazarApp/home.html', context)
 
 @login_required(login_url='/login/')
 def tienda(request):
@@ -45,12 +49,14 @@ def tienda(request):
             Q(marca_FK__nombre_marca__icontains = busqueda) |
             Q(categoria_FK__nombre_categoria__icontains = busqueda) 
         ).distinct()
+    # Renderizado de la plantilla   
     context = {"productos":productos}
     return render(request,"ProyecBazarApp/tienda.html",context)
 
 #-------------------------------------------cambiar por informe mas adelante ------------------------------------
 @login_required(login_url='/login/')
 def pagos(request):
+    # Búsqueda de productos
     busqueda = request.GET.get('buscar')
     productos = Producto.objects.all()
     if busqueda:
@@ -60,13 +66,13 @@ def pagos(request):
             Q(marca_FK__nombre_marca__icontains=busqueda) |
             Q(categoria_FK__nombre_categoria__icontains=busqueda)
         ).distinct()
+    # Paginación de resultados
     paginator = Paginator(productos, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    #para el PDF
+    # Generación de PDF
     producPDF = productos
-
     # si se envía un formulario con el botón "Generar PDF", se genera la vista previa del PDF
     if request.method == 'POST' and 'generar_pdf' in request.POST:
         # generar el contenido HTML
