@@ -9,7 +9,7 @@
 
 {% block content %}
 <div class="container">
-  <table border="1px">
+  <table>
     <thead>
       <tr>
         <th>Código</th>
@@ -35,8 +35,12 @@
   <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
-            <a href="?page=1">&laquo; Primero</a>
-            <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+            <a href="?page=1">
+              <i class="fa-solid fa-backward-step"></i>
+            </a>
+            <a href="?page={{ page_obj.previous_page_number }}">
+              <i class="fa-solid fa-backward"></i>
+            </a>
         {% endif %}
   
         <span class="current-page">
@@ -44,12 +48,16 @@
         </span>
   
         {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">Último &raquo;</a>
+            <a href="?page={{ page_obj.next_page_number }}">
+              <i class="fa-solid fa-forward"></i>
+            </a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">
+              <i class="fa-solid fa-forward-step"></i>
+            </a>
         {% endif %}
     </span>
   </div>  
-  <form method="post">
+  <form method="post" class="generadorPDF">
     {% csrf_token %}
     <button type="submit" name="generar_pdf">Generar PDF</button>
   </form>

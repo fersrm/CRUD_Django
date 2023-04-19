@@ -28,7 +28,7 @@ def home(request):
             return redirect('Tienda')
     else:
         form = ProductoForm()
-        # Aquí agregamos el mensaje de error en caso de que el formulario no sea válido
+    # Aquí agregamos el mensaje de error en caso de que el formulario no sea válido
     if not form.is_valid():
         error_message = form.errors
     else:

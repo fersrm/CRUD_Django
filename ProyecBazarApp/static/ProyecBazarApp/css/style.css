@@ -2,6 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 :root{
   --blanco:#fff;
+  --blanco2:#f2f2f2;
   --fondomenu:#11101d;
   --fondoPerfil:#1d1b31;
   --fondomenu2:#4c4786;
@@ -361,6 +362,67 @@
 }
 .barra_busqueda button:hover{
   background-color:var(--fondomenu2);
+}
+/*-----------------------TABLA--------------------------*/
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+}
+
+th {
+  background-color: var(--fondoPerfil);
+  text-align: left;
+  padding: 10px;
+  border: 1px solid var(--fondomenu);
+  color: var(--blanco);
+  text-align: center;
+}
+
+td {
+  border: 1px solid var(--fondomenu2);
+  padding: 10px;
+}
+
+tr:nth-child(even) {
+  background-color: var(--blanco2);
+}
+
+.total {
+  text-align: right;
+  font-weight: bold;
+}
+/*-----------Paginador----------*/
+/* .pagination{
+  border: 1px solid red;
+} */
+.step-links{
+  background-color: var(--blanco2);
+  padding: 0 10px;
+  border-radius: 5px;
+}
+.step-links a{
+  text-decoration: none;
+  color: var(--fondoPerfil);
+  cursor: pointer;
+}
+/* .current-page{
+  border: 1px solid black;
+} */
+.generadorPDF{
+  margin-top: 1rem;
+  border: none;
+}
+.generadorPDF button{
+  border: none;
+  padding: 10px;
+  background-color: var(--fondomenu);
+  color: var(--blanco);
+  cursor: pointer;
+  border-radius: 5px;
+}
+.generadorPDF button:hover{
+  background-color: var(--fondomenu2);
 }
 /*---------------------------------------------*/
 @media screen and (max-width: 400px){
