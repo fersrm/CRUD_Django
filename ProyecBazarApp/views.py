@@ -5,6 +5,11 @@ from .models import Producto
 from django.db.models import Q
 from .forms import ProductoForm
 from django.core.paginator import Paginator
+#para el pdf
+import os
+import tempfile
+import webbrowser
+import pdfkit
 
 # Create your views here.
 @login_required(login_url='/login/')
@@ -50,20 +55,56 @@ def pagos(request):
     productos = Producto.objects.all()
     if busqueda:
         productos = Producto.objects.filter(
-            Q(nombre_producto__icontains = busqueda) |
-            Q(codigo_producto__icontains = busqueda) |
-            Q(marca_FK__nombre_marca__icontains = busqueda) |
-            Q(categoria_FK__nombre_categoria__icontains = busqueda) 
-    ).distinct()
-    paginator = Paginator(productos, 10)
+            Q(nombre_producto__icontains=busqueda) |
+            Q(codigo_producto__icontains=busqueda) |
+            Q(marca_FK__nombre_marca__icontains=busqueda) |
+            Q(categoria_FK__nombre_categoria__icontains=busqueda)
+        ).distinct()
+    paginator = Paginator(productos, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+
+    #para el PDF
+    producPDF = productos
+
+    # si se envía un formulario con el botón "Generar PDF", se genera la vista previa del PDF
+    if request.method == 'POST' and 'generar_pdf' in request.POST:
+        # generar el contenido HTML
+        with open('ProyecBazarApp/templates/ProyecBazarApp/include/plantilla.html', 'r') as f:
+            html_content = f.read()
+
+        # añadir los datos de la tabla al contenido HTML
+        html_content += '<table>'
+        html_content += '<thead><tr><th>Código</th><th>Nombre</th><th>Precio</th><th>Marca</th><th>Categoría</th></tr></thead><tbody>'
+        for producto in producPDF:
+            html_content += f'<tr><td>{producto.codigo_producto}</td><td>{producto.nombre_producto}</td><td>{producto.precio_producto}</td><td>{producto.marca_FK}</td><td>{producto.categoria_FK}</td></tr>'
+        html_content += '</tbody></table>'
+
+        # Guardar el contenido HTML en un archivo temporal
+        with tempfile.NamedTemporaryFile(suffix='.html', delete=False) as tmp_file:
+            tmp_file.write(html_content.encode('utf-8'))
+            tmp_file.flush()
+
+            # Generar el PDF a partir del contenido del archivo temporal
+            pdf_content = pdfkit.from_file(tmp_file.name, False)
+
+            # Guardamos el contenido del PDF en un archivo temporal
+            with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as pdf_file:
+                pdf_file.write(pdf_content)
+                pdf_file.flush()
+
+                # Abrimos la vista previa del PDF en el navegador
+                webbrowser.open_new_tab(pdf_file.name)
+
+        # Cerrar manualmente el archivo temporal
+        os.unlink(tmp_file.name)
+
     return render(request, 'ProyecBazarApp/pagos.html', {'page_obj': page_obj})
 
+#-----------------------------------------------------------------------------------------------------------------------
 def salir(request):
     logout(request)
     return redirect('/')
 
 
-
-
+#-----------------------------------------------------------------

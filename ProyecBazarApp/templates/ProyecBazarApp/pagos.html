@@ -49,5 +49,9 @@
         {% endif %}
     </span>
   </div>  
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" name="generar_pdf">Generar PDF</button>
+  </form>
 </div>
 {% endblock %}
