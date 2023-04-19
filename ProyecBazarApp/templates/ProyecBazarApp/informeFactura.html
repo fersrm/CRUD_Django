@@ -1,0 +1,63 @@
+{% extends "ProyecBazarApp/base.html" %}
+
+{% block head %}
+  <div class="barra_busqueda">
+    <span class="text">Pagos</span>
+    {% include 'ProyecBazarApp/include/buscador.html' %}
+  </div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <table>
+    <thead>
+      <tr>
+        <th>Folio</th>
+        <th>Total</th>
+        <th>Vendedor</th>
+        <th>Fecha de emisión</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for factura in page_obj %}
+      <tr>
+        <td>{{ factura.id_factura }}</td>
+        <td>{{ factura.total_factura }}</td>
+        <td>{{ factura.usuario_FK }}</td>
+        <td>{{ factura.fecha_emision.date }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+  <div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">
+              <i class="fa-solid fa-backward-step"></i>
+            </a>
+            <a href="?page={{ page_obj.previous_page_number }}">
+              <i class="fa-solid fa-backward"></i>
+            </a>
+        {% endif %}
+  
+        <span class="current-page">
+            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+        </span>
+  
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">
+              <i class="fa-solid fa-forward"></i>
+            </a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">
+              <i class="fa-solid fa-forward-step"></i>
+            </a>
+        {% endif %}
+    </span>
+  </div>  
+  <form method="post" class="generadorPDF">
+    {% csrf_token %}
+    <button type="submit" name="informeFacturas_pdf">Generar PDF</button>
+  </form>
+</div>
+{% endblock %}

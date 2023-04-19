@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 
 # Modelos y formularios
 from .forms import ProductoForm
-from .models import Producto
+from .models import Producto, Facturas, Boletas
 
 # Librerías para generar PDF
 import os
@@ -53,7 +53,7 @@ def tienda(request):
     context = {"productos":productos}
     return render(request,"ProyecBazarApp/tienda.html",context)
 
-#-------------------------------------------cambiar por informe mas adelante ------------------------------------
+#-------------------------------------------cambiar por Factura mas adelante ------------------------------------
 @login_required(login_url='/login/')
 def pagos(request):
     # Búsqueda de productos
@@ -114,3 +114,108 @@ def salir(request):
 
 
 #-----------------------------------------------------------------
+@login_required(login_url='/login/')
+def vita_facturas(request):
+    # Búsqueda de facturas
+    busqueda = request.GET.get('buscar')
+    facturas = Facturas.objects.all()
+    if busqueda:
+        facturas = Facturas.objects.filter(
+            Q(id_factura=busqueda) |
+        #    Q(fecha_emision=busqueda) |
+            Q(total_factura=busqueda) |
+            Q(usuario_FK__username=busqueda) 
+        ).distinct()
+    # Paginación de resultados
+    paginator = Paginator(facturas, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Generación de PDF
+    facturaPDF = facturas
+    # si se envía un formulario con el botón "Generar PDF", se genera la vista previa del PDF
+    if request.method == 'POST' and 'informeFacturas_pdf' in request.POST:
+        # generar el contenido HTML
+        with open('ProyecBazarApp/templates/ProyecBazarApp/include/plantilla.html', 'r') as f:
+            html_content = f.read()
+
+        # añadir los datos de la tabla al contenido HTML
+        html_content += '<table>'
+        html_content += '<thead><tr><th>Folio</th><th>Total</th><th>Vendedor</th><th>Fecha de emisión</th></tr></thead><tbody>'
+        for factura in facturaPDF:
+            html_content += f'<tr><td>{factura.id_factura}</td><td>{factura.total_factura}</td><td>{factura.usuario_FK}</td><td>{factura.fecha_emision.date()}</td></tr>'
+        html_content += '</tbody></table>'
+
+        # Guardar el contenido HTML en un archivo temporal
+        with tempfile.NamedTemporaryFile(suffix='.html', delete=False) as tmp_file:
+            tmp_file.write(html_content.encode('utf-8'))
+            tmp_file.flush()
+
+            # Generar el PDF a partir del contenido del archivo temporal
+            pdf_content = pdfkit.from_file(tmp_file.name, False)
+
+            # Guardamos el contenido del PDF en un archivo temporal
+            with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as pdf_file:
+                pdf_file.write(pdf_content)
+                pdf_file.flush()
+
+                # Abrimos la vista previa del PDF en el navegador
+                webbrowser.open_new_tab(pdf_file.name)
+
+        # Cerrar manualmente el archivo temporal
+        os.unlink(tmp_file.name)
+
+    return render(request, 'ProyecBazarApp/informeFactura.html', {'page_obj': page_obj})
+#-----------------------------------------boletas---------------------------------------------------------------------------------------
+@login_required(login_url='/login/')
+def vita_boletas(request):
+    # Búsqueda de boletas
+    busqueda = request.GET.get('buscar')
+    boletas = Boletas.objects.all()
+    if busqueda:
+        boletas = Boletas.objects.filter(
+            Q(id_boleta=busqueda) |
+        #    Q(fecha_emision=busqueda) |
+            Q(total_boleta=busqueda) |
+            Q(usuario_FK__username=busqueda) 
+        ).distinct()
+    # Paginación de resultados
+    paginator = Paginator(boletas, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Generación de PDF
+    BoletasPDF = boletas
+    # si se envía un formulario con el botón "Generar PDF", se genera la vista previa del PDF
+    if request.method == 'POST' and 'informeBoletas_pdf' in request.POST:
+        # generar el contenido HTML
+        with open('ProyecBazarApp/templates/ProyecBazarApp/include/plantilla.html', 'r') as f:
+            html_content = f.read()
+
+        # añadir los datos de la tabla al contenido HTML
+        html_content += '<table>'
+        html_content += '<thead><tr><th>Folio</th><th>Total</th><th>Vendedor</th><th>Fecha de emisión</th></tr></thead><tbody>'
+        for boleta in BoletasPDF:
+            html_content += f'<tr><td>{boleta.id_boleta}</td><td>{boleta.total_boleta}</td><td>{boleta.usuario_FK}</td><td>{boleta.fecha_emision.date()}</td></tr>'
+        html_content += '</tbody></table>'
+
+        # Guardar el contenido HTML en un archivo temporal
+        with tempfile.NamedTemporaryFile(suffix='.html', delete=False) as tmp_file:
+            tmp_file.write(html_content.encode('utf-8'))
+            tmp_file.flush()
+
+            # Generar el PDF a partir del contenido del archivo temporal
+            pdf_content = pdfkit.from_file(tmp_file.name, False)
+
+            # Guardamos el contenido del PDF en un archivo temporal
+            with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as pdf_file:
+                pdf_file.write(pdf_content)
+                pdf_file.flush()
+
+                # Abrimos la vista previa del PDF en el navegador
+                webbrowser.open_new_tab(pdf_file.name)
+
+        # Cerrar manualmente el archivo temporal
+        os.unlink(tmp_file.name)
+
+    return render(request, 'ProyecBazarApp/informeBoleta.html', {'page_obj': page_obj})
