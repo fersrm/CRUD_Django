@@ -6,12 +6,12 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('login/', LoginView.as_view(template_name='ProyecBazarApp/login.html'), name='login'),
-    path('', views.home, name='Home'),
-    path('tienda/', views.tienda, name='Tienda'),
-    path('pagos/', views.pagos, name='Pagos'),
-    path('informe_facturas/', views.vita_facturas, name='Facturas'),
-    path('informe_Boletas/', views.vita_boletas, name='Boletas'),
-    path('salir/', views.salir, name='salir'),
+    path('', views.HomeCreateView.as_view(), name='Home'),
+    path('tienda/', views.TiendaListView.as_view(), name='Tienda'),
+    path('pagos/', views.PagosListView.as_view(), name='Pagos'),
+    path('informe_facturas/', views.FacturaListView.as_view(), name='Facturas'),
+    path('informe_Boletas/', views.BoletaListView.as_view(), name='Boletas'),
+    path('salir/', views.SalirView.as_view(), name='salir'),
 ]
 
 urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

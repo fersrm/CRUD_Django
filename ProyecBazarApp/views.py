@@ -1,9 +1,8 @@
 # Librerías de Django
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.shortcuts import render, redirect
+from django.utils.decorators import method_decorator
 
 # Modelos y formularios
 from .forms import ProductoForm
@@ -15,215 +14,181 @@ import pdfkit
 import tempfile
 import webbrowser
 
-# Create your views here.
-@login_required(login_url='/login/')
-def home(request):
-    if request.method == 'POST':
-        form = ProductoForm(request.POST, request.FILES)
-        if form.is_valid():
-            # Guardar el nuevo producto en la base de datos
-            form.clean() #transforma a mayuscula
-            form.save()
-            # Redireccionar al usuario a otra página
-            return redirect('Tienda')
-    else:
-        form = ProductoForm()
-    # Aquí agregamos el mensaje de error en caso de que el formulario no sea válido
-    if not form.is_valid():
+# Para trabajar con clases
+from django.contrib.auth.views import LogoutView
+from django.views.generic import ListView , CreateView
+from django.urls import reverse_lazy
+
+# Nueva función para generar PDF
+import os
+import tempfile
+import webbrowser
+
+import pdfkit
+
+
+def generar_pdf_boletas(queryset):
+    # Plantilla HTML
+    with open('ProyecBazarApp/templates/ProyecBazarApp/include/plantilla.html', 'r') as f:
+        contenido = f.read()
+    # Generar contenido HTML
+    contenido += '<table>'
+    contenido += '<thead><tr><th>Folio</th><th>Total</th><th>Vendedor</th><th>Fecha de emisión</th></tr></thead><tbody>'
+    for objeto in queryset:
+        contenido += f'<tr><td>{objeto.id_boleta}</td><td>{objeto.total_boleta}</td><td>{objeto.usuario_FK}</td><td>{objeto.fecha_emision.date()}</td></tr>'
+    contenido += '</tbody></table>'
+    # Guardar contenido HTML en un archivo temporal
+    with tempfile.NamedTemporaryFile(suffix='.html', delete=False) as tmp_file:
+        tmp_file.write(contenido.encode('utf-8'))
+        tmp_file.flush()
+        # Generar PDF a partir del contenido del archivo temporal
+        pdf_content = pdfkit.from_file(tmp_file.name, False)
+        # Guardar contenido del PDF en un archivo temporal
+        with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as pdf_file:
+            pdf_file.write(pdf_content)
+            pdf_file.flush()
+            # Abrir la vista previa del PDF en el navegador
+            webbrowser.open_new_tab(pdf_file.name)
+        # Cerrar manualmente el archivo temporal
+        os.unlink(tmp_file.name)
+
+# Create your views here.---------------------------------------------------
+
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class HomeCreateView(CreateView):
+    model = Producto
+    form_class = ProductoForm
+    template_name = 'ProyecBazarApp/home.html'
+    success_url = reverse_lazy('Tienda')
+
+    def form_valid(self, form):
+        form.clean() # transforma a mayúsculas
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
         error_message = form.errors
-    else:
-        error_message = "valido"
-    # Renderizado de la plantilla
-    context = {'form': form, 'error_message': error_message}
-    return render(request, 'ProyecBazarApp/home.html', context)
+        context = self.get_context_data(form=form, error_message=error_message)
+        return self.render_to_response(context)
 
-@login_required(login_url='/login/')
-def tienda(request):
-    busqueda = request.GET.get('buscar')
-    productos = Producto.objects.all()
+#---------------------------TIENDA-----------------------------------------------------------------
 
-    if busqueda:
-        productos = Producto.objects.filter(
-            Q(nombre_producto__icontains = busqueda) |
-            Q(codigo_producto__icontains = busqueda) |
-            Q(marca_FK__nombre_marca__icontains = busqueda) |
-            Q(categoria_FK__nombre_categoria__icontains = busqueda) 
-        ).distinct()
-    # Renderizado de la plantilla   
-    context = {"productos":productos}
-    return render(request,"ProyecBazarApp/tienda.html",context)
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class TiendaListView(ListView):
+    model = Producto
+    template_name = 'ProyecBazarApp/tienda.html'
+    paginate_by = 8
 
-#------------------ INFORMES-----------------------------------------------
-@login_required(login_url='/login/')
-def vita_facturas(request):
-    # Búsqueda de facturas
-    busqueda = request.GET.get('buscar')
-    busquedaF = request.GET.get('buscarFecha')
-    facturas = Facturas.objects.all()
-    if busqueda:
-        facturas = Facturas.objects.filter(
-            Q(id_factura=busqueda) |
-            Q(total_factura=busqueda) |
-            Q(usuario_FK__username=busqueda) 
-        ).distinct()
-    elif busquedaF:
-        facturas = Facturas.objects.filter(
-            Q(fecha_emision__icontains=busquedaF) 
-        ).distinct()
-    # Paginación de resultados
-    paginator = Paginator(facturas, 5)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    def get_queryset(self):
+        busqueda = self.request.GET.get('buscar')
+        campos_busqueda = ['id_factura', 'total_factura', 'usuario_FK__username']
+        return self.buscar_campos(busqueda,campos_busqueda)
 
-    # Generación de PDF
-    facturaPDF = facturas
-    # si se envía un formulario con el botón "Generar PDF", se genera la vista previa del PDF
-    if request.method == 'POST' and 'informeFacturas_pdf' in request.POST:
-        # generar el contenido HTML
-        with open('ProyecBazarApp/templates/ProyecBazarApp/include/plantilla.html', 'r') as f:
-            html_content = f.read()
+    def buscar_campos(self, busqueda, campos): # posible de sacar a funcion externa
+        modelo = self.model.objects.all()
+        if busqueda:
+            queries = [Q(**{campo + '__icontains': busqueda}) for campo in campos]
+            query = queries.pop()
+            for item in queries:
+                query |= item
+            modelo = modelo.filter(query).distinct()
+        return modelo
 
-        # añadir los datos de la tabla al contenido HTML
-        html_content += '<table>'
-        html_content += '<thead><tr><th>Folio</th><th>Total</th><th>Vendedor</th><th>Fecha de emisión</th></tr></thead><tbody>'
-        for factura in facturaPDF:
-            html_content += f'<tr><td>{factura.id_factura}</td><td>{factura.total_factura}</td><td>{factura.usuario_FK}</td><td>{factura.fecha_emision.date()}</td></tr>'
-        html_content += '</tbody></table>'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        paginator = Paginator(context['object_list'], self.paginate_by)
+        page = self.request.GET.get('page')
+        context['object_list'] = paginator.get_page(page)
+        return context
+    
+#----------------------INFORMES-----------------------------------------------
+#----------------------FACTURAS----------------------------------------------------------
 
-        # Guardar el contenido HTML en un archivo temporal
-        with tempfile.NamedTemporaryFile(suffix='.html', delete=False) as tmp_file:
-            tmp_file.write(html_content.encode('utf-8'))
-            tmp_file.flush()
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class FacturaListView(ListView):
+    model = Facturas
+    template_name = 'ProyecBazarApp/informeFactura.html'
+    paginate_by = 10
 
-            # Generar el PDF a partir del contenido del archivo temporal
-            pdf_content = pdfkit.from_file(tmp_file.name, False)
+    def get_queryset(self):
+        busqueda = self.request.GET.get('buscar')
+        busquedaF = self.request.GET.get('buscarFecha')
+        campos_busqueda = ['id_factura', 'total_factura', 'usuario_FK__username']
+        return self.buscar_campos(busqueda,busquedaF,campos_busqueda)
 
-            # Guardamos el contenido del PDF en un archivo temporal
-            with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as pdf_file:
-                pdf_file.write(pdf_content)
-                pdf_file.flush()
+    def buscar_campos(self, busqueda,busquedaF, campos):
+        modelo = self.model.objects.all()
+        if busqueda:
+            queries = [Q(**{campo: busqueda}) for campo in campos]
+            query = queries.pop()
+            for item in queries:
+                query |= item
+            modelo = modelo.filter(query).distinct()
+        elif busquedaF:
+            query = Q(fecha_emision__icontains=busquedaF) 
+            modelo = modelo.filter(query).distinct()
+        return modelo
 
-                # Abrimos la vista previa del PDF en el navegador
-                webbrowser.open_new_tab(pdf_file.name)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        paginator = Paginator(context['object_list'], self.paginate_by)
+        page = self.request.GET.get('page')
+        context['object_list'] = paginator.get_page(page)
+        return context
+    #--------------------PDF------------------------------------
+    def post(self, *args, **kwargs):
+        # Si se envió el formulario de generar PDF, se genera el PDF
+        if self.request.method == 'POST' and 'informeFacturas_pdf' in self.request.POST:
+            queryset = self.get_queryset()
+            generar_pdf_boletas(queryset)
+        return self.get(self.request, *args, **kwargs)
+    
+#-----------------------BOLETAS--------------------------------------------------------------------------------------
 
-        # Cerrar manualmente el archivo temporal
-        os.unlink(tmp_file.name)
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class BoletaListView(ListView):
+    model = Boletas
+    template_name = 'ProyecBazarApp/informeBoleta.html'
+    paginate_by = 10
 
-    return render(request, 'ProyecBazarApp/informeFactura.html', {'page_obj': page_obj})
-#-----------------------------------------boletas---------------------------------------------------------------------------------------
-@login_required(login_url='/login/')
-def vita_boletas(request):
-    # Búsqueda de boletas
-    busqueda = request.GET.get('buscar')
-    busquedaB = request.GET.get('buscarFecha')
-    boletas = Boletas.objects.all()
-    if busqueda:
-        boletas = Boletas.objects.filter(
-            Q(id_boleta=busqueda) |
-            Q(total_boleta=busqueda) |
-            Q(usuario_FK__username=busqueda) 
-        ).distinct()
-    elif busquedaB:
-        boletas = Boletas.objects.filter(
-            Q(fecha_emision__icontains=busquedaB) 
-    ).distinct()
-    # Paginación de resultados
-    paginator = Paginator(boletas, 5)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    def get_queryset(self):
+        busqueda = self.request.GET.get('buscar')
+        busquedaF = self.request.GET.get('buscarFecha')
+        campos_busqueda = ['id_boleta', 'total_boleta', 'usuario_FK__username']
+        return self.buscar_campos(busqueda,busquedaF,campos_busqueda)
 
-    # Generación de PDF
-    BoletasPDF = boletas
-    # si se envía un formulario con el botón "Generar PDF", se genera la vista previa del PDF
-    if request.method == 'POST' and 'informeBoletas_pdf' in request.POST:
-        # generar el contenido HTML
-        with open('ProyecBazarApp/templates/ProyecBazarApp/include/plantilla.html', 'r') as f:
-            html_content = f.read()
+    def buscar_campos(self, busqueda,busquedaF, campos):
+        modelo = self.model.objects.all()
+        if busqueda:
+            queries = [Q(**{campo: busqueda}) for campo in campos]
+            query = queries.pop()
+            for item in queries:
+                query |= item
+            modelo = modelo.filter(query).distinct()
+        elif busquedaF:
+            query = Q(fecha_emision__icontains=busquedaF) 
+            modelo = modelo.filter(query).distinct()
+        return modelo
 
-        # añadir los datos de la tabla al contenido HTML
-        html_content += '<table>'
-        html_content += '<thead><tr><th>Folio</th><th>Total</th><th>Vendedor</th><th>Fecha de emisión</th></tr></thead><tbody>'
-        for boleta in BoletasPDF:
-            html_content += f'<tr><td>{boleta.id_boleta}</td><td>{boleta.total_boleta}</td><td>{boleta.usuario_FK}</td><td>{boleta.fecha_emision.date()}</td></tr>'
-        html_content += '</tbody></table>'
-
-        # Guardar el contenido HTML en un archivo temporal
-        with tempfile.NamedTemporaryFile(suffix='.html', delete=False) as tmp_file:
-            tmp_file.write(html_content.encode('utf-8'))
-            tmp_file.flush()
-
-            # Generar el PDF a partir del contenido del archivo temporal
-            pdf_content = pdfkit.from_file(tmp_file.name, False)
-
-            # Guardamos el contenido del PDF en un archivo temporal
-            with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as pdf_file:
-                pdf_file.write(pdf_content)
-                pdf_file.flush()
-
-                # Abrimos la vista previa del PDF en el navegador
-                webbrowser.open_new_tab(pdf_file.name)
-
-        # Cerrar manualmente el archivo temporal
-        os.unlink(tmp_file.name)
-
-    return render(request, 'ProyecBazarApp/informeBoleta.html', {'page_obj': page_obj})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        paginator = Paginator(context['object_list'], self.paginate_by)
+        page = self.request.GET.get('page')
+        context['object_list'] = paginator.get_page(page)
+        return context
+    #--------------------PDF------------------------------------
+    def post(self, *args, **kwargs):
+        # Si se envió el formulario de generar PDF, se genera el PDF
+        if self.request.method == 'POST' and 'informeBoletas_pdf' in self.request.POST:
+            queryset = self.get_queryset()
+            generar_pdf_boletas(queryset)
+        return self.get(self.request, *args, **kwargs)
 
 #-------------------------------------------cambiar por Factura mas adelante ------------------------------------
-@login_required(login_url='/login/')
-def pagos(request):
-    # Búsqueda de productos
-    busqueda = request.GET.get('buscar')
-    productos = Producto.objects.all()
-    if busqueda:
-        productos = Producto.objects.filter(
-            Q(nombre_producto__icontains=busqueda) |
-            Q(codigo_producto__icontains=busqueda) |
-            Q(marca_FK__nombre_marca__icontains=busqueda) |
-            Q(categoria_FK__nombre_categoria__icontains=busqueda)
-        ).distinct()
-    # Paginación de resultados
-    paginator = Paginator(productos,5)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class PagosListView(ListView):
+    pass
 
-    # Generación de PDF
-    producPDF = productos
-    # si se envía un formulario con el botón "Generar PDF", se genera la vista previa del PDF
-    if request.method == 'POST' and 'generar_pdf' in request.POST:
-        # generar el contenido HTML
-        with open('ProyecBazarApp/templates/ProyecBazarApp/include/plantilla.html', 'r') as f:
-            html_content = f.read()
+#-----------------------SALIR------------------------------------------------------------------------------------------------
 
-        # añadir los datos de la tabla al contenido HTML
-        html_content += '<table>'
-        html_content += '<thead><tr><th>Código</th><th>Nombre</th><th>Precio</th><th>Marca</th><th>Categoría</th></tr></thead><tbody>'
-        for producto in producPDF:
-            html_content += f'<tr><td>{producto.codigo_producto}</td><td>{producto.nombre_producto}</td><td>{producto.precio_producto}</td><td>{producto.marca_FK}</td><td>{producto.categoria_FK}</td></tr>'
-        html_content += '</tbody></table>'
-
-        # Guardar el contenido HTML en un archivo temporal
-        with tempfile.NamedTemporaryFile(suffix='.html', delete=False) as tmp_file:
-            tmp_file.write(html_content.encode('utf-8'))
-            tmp_file.flush()
-
-            # Generar el PDF a partir del contenido del archivo temporal
-            pdf_content = pdfkit.from_file(tmp_file.name, False)
-
-            # Guardamos el contenido del PDF en un archivo temporal
-            with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as pdf_file:
-                pdf_file.write(pdf_content)
-                pdf_file.flush()
-
-                # Abrimos la vista previa del PDF en el navegador
-                webbrowser.open_new_tab(pdf_file.name)
-
-        # Cerrar manualmente el archivo temporal
-        os.unlink(tmp_file.name)
-
-    return render(request, 'ProyecBazarApp/pagos.html', {'page_obj': page_obj})
-
-#-----------------------------------------------------------------------------------------------------------------------
-def salir(request):
-    logout(request)
-    return redirect('/')
-
+class SalirView(LogoutView):
+    next_page = '/'

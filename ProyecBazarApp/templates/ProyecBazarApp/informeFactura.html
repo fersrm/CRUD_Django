@@ -20,7 +20,7 @@
       </tr>
     </thead>
     <tbody>
-      {% for factura in page_obj %}
+      {% for factura in object_list %}
       <tr>
         <td>{{ factura.id_factura }}</td>
         <td>{{ factura.total_factura }}</td>

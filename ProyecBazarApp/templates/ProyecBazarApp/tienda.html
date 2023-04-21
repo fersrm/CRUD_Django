@@ -9,28 +9,50 @@
 
 {% block content %}
 
-  <div class="container containerIMG">
-
-  {% for producto in productos %}
-  
-    <div class="carta_producto">
-      <img src="{{producto.imagen.url}}" alt="{{producto.nombre_producto}}">
-      <div class="info_producto">
-          <span class="codigo">{{producto.codigo_producto}}</span>
-          <span class="nombre_producto">{{producto.nombre_producto}}</span>
-          <p>Categoria</p>
-          <span class="categoria">{{producto.categoria_FK}}</span>
-          <p>Marca</p>
-          <span class="marca">{{producto.marca_FK}}</span>
+  <div class="container">
+    <div class="containerIMG">
+    {% for producto in object_list %}
+      <div class="carta_producto">
+        <img src="{{producto.imagen.url}}" alt="{{producto.nombre_producto}}">
+        <div class="info_producto">
+            <span class="codigo">{{producto.codigo_producto}}</span>
+            <span class="nombre_producto">{{producto.nombre_producto}}</span>
+            <p>Categoria</p>
+            <span class="categoria">{{producto.categoria_FK}}</span>
+            <p>Marca</p>
+            <span class="marca">{{producto.marca_FK}}</span>
+        </div>
+        <div class="valor">
+            <strong>$ {{producto.precio_producto}}</strong>
+        </div>
       </div>
-      <div class="valor">
-          <strong>$ {{producto.precio_producto}}</strong>
-      </div>
-    </div>
-
   {% endfor %}
-
+    </div>
+    <div class="pagination">
+      <span class="step-links">
+          {% if page_obj.has_previous %}
+              <a href="?page=1">
+                <i class="fa-solid fa-backward-step"></i>
+              </a>
+              <a href="?page={{ page_obj.previous_page_number }}">
+                <i class="fa-solid fa-backward"></i>
+              </a>
+          {% endif %}
+    
+          <span class="current-page">
+              Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+          </span>
+    
+          {% if page_obj.has_next %}
+              <a href="?page={{ page_obj.next_page_number }}">
+                <i class="fa-solid fa-forward"></i>
+              </a>
+              <a href="?page={{ page_obj.paginator.num_pages }}">
+                <i class="fa-solid fa-forward-step"></i>
+              </a>
+          {% endif %}
+      </span>
+    </div> 
   </div>
-
 {%endblock %}
 
