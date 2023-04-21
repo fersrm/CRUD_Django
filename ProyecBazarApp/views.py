@@ -19,13 +19,8 @@ from django.contrib.auth.views import LogoutView
 from django.views.generic import ListView , CreateView
 from django.urls import reverse_lazy
 
-# Nueva función para generar PDF
-import os
-import tempfile
-import webbrowser
-
-import pdfkit
-
+# borrar temporales al cerrar cession
+import glob
 
 def generar_pdf_boletas(queryset):
     # Plantilla HTML
@@ -37,20 +32,18 @@ def generar_pdf_boletas(queryset):
     for objeto in queryset:
         contenido += f'<tr><td>{objeto.id_boleta}</td><td>{objeto.total_boleta}</td><td>{objeto.usuario_FK}</td><td>{objeto.fecha_emision.date()}</td></tr>'
     contenido += '</tbody></table>'
-    # Guardar contenido HTML en un archivo temporal
-    with tempfile.NamedTemporaryFile(suffix='.html', delete=False) as tmp_file:
-        tmp_file.write(contenido.encode('utf-8'))
-        tmp_file.flush()
+    # Generar nombre único para el archivo temporal HTML
+    with tempfile.NamedTemporaryFile(suffix='.html', delete=False) as tmp_html:
+        tmp_html.write(contenido.encode('utf-8'))
+        tmp_html.flush()
         # Generar PDF a partir del contenido del archivo temporal
-        pdf_content = pdfkit.from_file(tmp_file.name, False)
-        # Guardar contenido del PDF en un archivo temporal
-        with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as pdf_file:
-            pdf_file.write(pdf_content)
-            pdf_file.flush()
+        pdf_content = pdfkit.from_file(tmp_html.name, False)
+        # Generar nombre único para el archivo temporal PDF
+        with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp_pdf:
+            tmp_pdf.write(pdf_content)
+            tmp_pdf.flush()
             # Abrir la vista previa del PDF en el navegador
-            webbrowser.open_new_tab(pdf_file.name)
-        # Cerrar manualmente el archivo temporal
-        os.unlink(tmp_file.name)
+            webbrowser.open_new_tab(tmp_pdf.name)
 
 def buscar_campos(model, campos, busqueda, busquedaF=""):
     modelo = model.objects.all()
@@ -175,4 +168,16 @@ class PagosListView(ListView):
 #-----------------------SALIR------------------------------------------------------------------------------------------------
 
 class SalirView(LogoutView):
-    next_page = '/'
+    next_page = '/'  
+    def dispatch(self, request, *args, **kwargs):
+        # Eliminar archivos temporales aquí
+        pdf_file_path = 'C:/Users/HP/AppData/Local/Temp/*.pdf'
+        html_file_path = 'C:/Users/HP/AppData/Local/Temp/*.html'   
+        for file_path in glob.glob(pdf_file_path):
+            os.remove(file_path)
+        for file_path in glob.glob(html_file_path):
+            os.remove(file_path)
+        # Llamar al método dispatch() original
+        return super().dispatch(request, *args, **kwargs)
+
+        
