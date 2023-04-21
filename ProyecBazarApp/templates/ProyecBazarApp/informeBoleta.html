@@ -10,6 +10,7 @@
 
 {% block content %}
 <div class="container">
+  {% if object_list %}
   <table>
     <thead>
       <tr>
@@ -60,5 +61,8 @@
     {% csrf_token %}
     <button type="submit" name="informeBoletas_pdf">Generar PDF</button>
   </form>
+  {% else %}
+  <strong>NO HAY REGISTROS</strong>  
+  {% endif %}
 </div>
 {% endblock %}

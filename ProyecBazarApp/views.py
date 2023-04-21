@@ -52,6 +52,26 @@ def generar_pdf_boletas(queryset):
         # Cerrar manualmente el archivo temporal
         os.unlink(tmp_file.name)
 
+def buscar_campos(model, campos, busqueda, busquedaF=""):
+    modelo = model.objects.all()
+    if busqueda:
+        if isinstance(model(), Producto):
+            queries = [Q(**{campo + '__icontains': busqueda}) for campo in campos]
+        else:
+            try:
+                int(busqueda)
+            except ValueError:
+                return model.objects.none()
+            queries = [Q(**{campo: busqueda}) for campo in campos]
+        query = queries.pop()
+        for item in queries:
+            query |= item
+        modelo = modelo.filter(query).distinct()
+    elif busquedaF:
+        query = Q(fecha_emision__icontains=busquedaF) 
+        modelo = modelo.filter(query).distinct()
+    return modelo
+
 # Create your views here.---------------------------------------------------
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
@@ -80,18 +100,8 @@ class TiendaListView(ListView):
 
     def get_queryset(self):
         busqueda = self.request.GET.get('buscar')
-        campos_busqueda = ['id_factura', 'total_factura', 'usuario_FK__username']
-        return self.buscar_campos(busqueda,campos_busqueda)
-
-    def buscar_campos(self, busqueda, campos): # posible de sacar a funcion externa
-        modelo = self.model.objects.all()
-        if busqueda:
-            queries = [Q(**{campo + '__icontains': busqueda}) for campo in campos]
-            query = queries.pop()
-            for item in queries:
-                query |= item
-            modelo = modelo.filter(query).distinct()
-        return modelo
+        campos_busqueda = ['nombre_producto', 'codigo_producto', 'marca_FK__nombre_marca','categoria_FK__nombre_categoria']
+        return buscar_campos(self.model,campos_busqueda,busqueda)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -113,20 +123,7 @@ class FacturaListView(ListView):
         busqueda = self.request.GET.get('buscar')
         busquedaF = self.request.GET.get('buscarFecha')
         campos_busqueda = ['id_factura', 'total_factura', 'usuario_FK__username']
-        return self.buscar_campos(busqueda,busquedaF,campos_busqueda)
-
-    def buscar_campos(self, busqueda,busquedaF, campos):
-        modelo = self.model.objects.all()
-        if busqueda:
-            queries = [Q(**{campo: busqueda}) for campo in campos]
-            query = queries.pop()
-            for item in queries:
-                query |= item
-            modelo = modelo.filter(query).distinct()
-        elif busquedaF:
-            query = Q(fecha_emision__icontains=busquedaF) 
-            modelo = modelo.filter(query).distinct()
-        return modelo
+        return buscar_campos(self.model,campos_busqueda,busqueda,busquedaF)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -154,20 +151,7 @@ class BoletaListView(ListView):
         busqueda = self.request.GET.get('buscar')
         busquedaF = self.request.GET.get('buscarFecha')
         campos_busqueda = ['id_boleta', 'total_boleta', 'usuario_FK__username']
-        return self.buscar_campos(busqueda,busquedaF,campos_busqueda)
-
-    def buscar_campos(self, busqueda,busquedaF, campos):
-        modelo = self.model.objects.all()
-        if busqueda:
-            queries = [Q(**{campo: busqueda}) for campo in campos]
-            query = queries.pop()
-            for item in queries:
-                query |= item
-            modelo = modelo.filter(query).distinct()
-        elif busquedaF:
-            query = Q(fecha_emision__icontains=busquedaF) 
-            modelo = modelo.filter(query).distinct()
-        return modelo
+        return buscar_campos(self.model,campos_busqueda,busqueda,busquedaF)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -11,6 +11,7 @@
 
   <div class="container">
     <div class="containerIMG">
+    {% if object_list %}
     {% for producto in object_list %}
       <div class="carta_producto">
         <img src="{{producto.imagen.url}}" alt="{{producto.nombre_producto}}">
@@ -53,6 +54,9 @@
           {% endif %}
       </span>
     </div> 
+  {% else %}
+  <strong>NO HAY REGISTROS</strong>  
+  {% endif %}
   </div>
 {%endblock %}
 
