@@ -22,16 +22,24 @@ from django.urls import reverse_lazy
 # borrar temporales al cerrar cession
 import glob
 
-def generar_pdf_boletas(queryset):
+def generar_pdf_boletas(queryset,camposH,camposB):
     # Plantilla HTML
     with open('ProyecBazarApp/templates/ProyecBazarApp/include/plantilla.html', 'r') as f:
         contenido = f.read()
     # Generar contenido HTML
     contenido += '<table>'
-    contenido += '<thead><tr><th>Folio</th><th>Total</th><th>Vendedor</th><th>Fecha de emisión</th></tr></thead><tbody>'
-    for objeto in queryset:
-        contenido += f'<tr><td>{objeto.id_boleta}</td><td>{objeto.total_boleta}</td><td>{objeto.usuario_FK}</td><td>{objeto.fecha_emision.date()}</td></tr>'
-    contenido += '</tbody></table>'
+    contenido += '<thead><tr>'
+    for campo in camposH: # Generar los th
+        contenido += f'<th>{campo}</th>'
+    contenido += '</tr></thead><tbody>'
+    for obj in queryset: # Genera los tr
+        contenido += '<tr>'
+        for campo in camposB:
+            if campo == 'fecha_emision':
+                contenido += f'<td>{getattr(obj, campo).date()}</td>'
+            else:
+                contenido += f'<td>{getattr(obj, campo)}</td>'
+        contenido += '</tr>'
     # Generar nombre único para el archivo temporal HTML
     with tempfile.NamedTemporaryFile(suffix='.html', delete=False) as tmp_html:
         tmp_html.write(contenido.encode('utf-8'))
@@ -45,10 +53,11 @@ def generar_pdf_boletas(queryset):
             # Abrir la vista previa del PDF en el navegador
             webbrowser.open_new_tab(tmp_pdf.name)
 
+
 def buscar_campos(model, campos, busqueda, busquedaF=""):
     modelo = model.objects.all()
     if busqueda:
-        if isinstance(model(), Producto):
+        if isinstance(model(), Producto): # Agregar los modelos aqui para busquedas no exactas
             queries = [Q(**{campo + '__icontains': busqueda}) for campo in campos]
         else:
             try:
@@ -104,7 +113,7 @@ class TiendaListView(ListView):
         return context
     
 #----------------------INFORMES-----------------------------------------------
-#----------------------FACTURAS----------------------------------------------------------
+#----------------------FACTURAS----------------------------------------------
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 class FacturaListView(ListView):
@@ -129,7 +138,9 @@ class FacturaListView(ListView):
         # Si se envió el formulario de generar PDF, se genera el PDF
         if self.request.method == 'POST' and 'informeFacturas_pdf' in self.request.POST:
             queryset = self.get_queryset()
-            generar_pdf_boletas(queryset)
+            camposTH = ['Folio','Total','Vendedor','Fecha de emisión']
+            camposTB = ['id_factura','total_factura','usuario_FK','fecha_emision']
+            generar_pdf_boletas(queryset,camposTH,camposTB)
         return self.get(self.request, *args, **kwargs)
     
 #-----------------------BOLETAS--------------------------------------------------------------------------------------
@@ -157,7 +168,9 @@ class BoletaListView(ListView):
         # Si se envió el formulario de generar PDF, se genera el PDF
         if self.request.method == 'POST' and 'informeBoletas_pdf' in self.request.POST:
             queryset = self.get_queryset()
-            generar_pdf_boletas(queryset)
+            camposTH = ['Folio','Total','Vendedor','Fecha de emisión']
+            camposTB = ['id_boleta','total_boleta','usuario_FK','fecha_emision']
+            generar_pdf_boletas(queryset,camposTH,camposTB)
         return self.get(self.request, *args, **kwargs)
 
 #-------------------------------------------cambiar por Factura mas adelante ------------------------------------
