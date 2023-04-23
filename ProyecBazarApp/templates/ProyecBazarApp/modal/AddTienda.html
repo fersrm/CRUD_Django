@@ -2,7 +2,7 @@
     <div class="modal-content">
       <span class="closeModal" id="cerrar-modal">&times;</span>
       <h2>Agregar Producto</h2>
-      <form method="post" class="add_produc" enctype="multipart/form-data">
+      <form method="post" class="add_produc" enctype="multipart/form-data" id="myForm">
         {% csrf_token %}
         {{ form }}
         <input type="submit" value="Agregar Producto">

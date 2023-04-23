@@ -1,0 +1,21 @@
+{% if form.errors %}
+{% for field, errors in form.errors.items %}
+  <script>
+    Swal.fire({
+      titleText: "Error en el formulario",
+      text: "{{ errors|join:', ' }}",
+      icon: "error",
+    });
+  </script>
+{% endfor %}
+{% elif messages %}
+{% for m in messages %}
+   <script>
+     Swal.fire({
+       titleText:"Felicidades",
+       text:"{{m}}",
+       icon:"success", 
+     });
+   </script>
+{% endfor %}
+{% endif %}

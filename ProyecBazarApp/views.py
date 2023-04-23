@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.utils.decorators import method_decorator
+from django.contrib import messages
 
 # Modelos y formularios
 from .forms import ProductoForm
@@ -118,12 +119,16 @@ class TiendaView(FormMixin, ListView):
     def form_valid(self, form):
         form.clean()
         form.save()
+        messages.success(self.request,"Producto agregado correctamente")
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        error_message = form.errors
-        context = self.get_context_data(form=form, error_message=error_message)
-        return self.render_to_response(context)
+        messages.error(self.request, 'Error en el formulario')
+        for field, errors in form.errors.items():
+            for error in errors:
+                messages.error(self.request, f"{field}: {error}")
+        return super().form_invalid(form)
+
 
     def post(self, *args, **kwargs):
         self.object_list = self.get_queryset()
