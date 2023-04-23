@@ -266,6 +266,7 @@
 }
 .add_produc input{
   width: 100%;
+  padding-left: 0.5rem;
 }
 .add_produc input[type="file"]{
   margin-bottom: 20px;
