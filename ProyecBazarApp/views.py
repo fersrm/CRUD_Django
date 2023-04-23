@@ -17,6 +17,7 @@ import webbrowser
 # Para trabajar con clases
 from django.contrib.auth.views import LogoutView
 from django.views.generic import ListView , CreateView
+from django.views.generic.edit import FormMixin
 from django.urls import reverse_lazy
 
 # borrar temporales al cerrar cession
@@ -95,23 +96,45 @@ class HomeCreateView(CreateView):
 #---------------------------TIENDA-----------------------------------------------------------------
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-class TiendaListView(ListView):
+class TiendaView(FormMixin, ListView):
     model = Producto
+    form_class = ProductoForm
     template_name = 'ProyecBazarApp/tienda.html'
     paginate_by = 8
 
     def get_queryset(self):
         busqueda = self.request.GET.get('buscar')
         campos_busqueda = ['nombre_producto', 'codigo_producto', 'marca_FK__nombre_marca','categoria_FK__nombre_categoria']
-        return buscar_campos(self.model,campos_busqueda,busqueda)
+        return buscar_campos(self.model, campos_busqueda, busqueda)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         paginator = Paginator(context['object_list'], self.paginate_by)
         page = self.request.GET.get('page')
         context['object_list'] = paginator.get_page(page)
+        context['form'] = self.get_form()
         return context
-    
+
+    def form_valid(self, form):
+        form.clean()
+        form.save()
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        error_message = form.errors
+        context = self.get_context_data(form=form, error_message=error_message)
+        return self.render_to_response(context)
+
+    def post(self, *args, **kwargs):
+        self.object_list = self.get_queryset()
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('Tienda')
 #----------------------INFORMES-----------------------------------------------
 #----------------------FACTURAS----------------------------------------------
 

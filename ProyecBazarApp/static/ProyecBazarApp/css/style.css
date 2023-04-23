@@ -8,6 +8,7 @@
   --fondomenu2:#4c4786;
   --valor:#ff0000;
   --sombra:0 0 5px 3px #2524243b;
+  --gris: #888888;
 }
 *{
   margin: 0;
@@ -252,14 +253,9 @@
 }
 /*-----------formulario agregar producto------------*/
 .add_produc{
-  box-shadow: var(--sombra);
-  border-radius: 5px;
-  padding: 1rem;
   margin-top: 2rem;
   display: flex;
   flex-wrap: wrap;
-  width: 50%;
-  min-width: 400px;
 }
 .add_produc ul{
   display: none;
@@ -272,16 +268,24 @@
   width: 100%;
 }
 .add_produc input[type="file"]{
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   cursor: pointer;
 }
 .add_produc input[type="submit"]{
-  margin-top: 1rem;
   cursor: pointer;
+  background-color: var(--fondoPerfil);
+  color: var(--blanco);
+  border: none;
+  padding: 10px 0;
+  border-radius: 5px;
+  margin-top: 1rem;
 } 
+.add_produc input[type="submit"]:hover{
+  background-color: var(--fondomenu2);
+}
 .add_produc select{
   margin-left: 0.5rem;
-  margin-right: 0.5rem;
+  margin-right: 2.5rem;
   cursor: pointer;
 }
 /*-----------TIENDA---------------------*/
@@ -292,8 +296,8 @@
   margin-bottom: 2rem;
 }
 .carta_producto{
-  height: auto;
-  min-height: 385px;
+  height: 385px;
+  /* min-height: 385px; */
   text-align: center;
   box-shadow: 0 0 10px 5px #1c1c1c3b;
   display: flex;
@@ -431,6 +435,46 @@ tr:nth-child(even) {
 }
 .generadorPDF button:hover{
   background-color: var(--fondomenu2);
+}
+/*------------MODAL-------------------------------*/
+.barra_busqueda .Add_produc{
+  border-radius: 5px;
+  margin-left: 5rem;
+}
+.modal {
+  display: none; 
+  justify-content: center;
+  align-items: center;
+  position: fixed; 
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: hidden; 
+  background-color: rgba(0,0,0,0.4); /* Color de fondo oscuro y semi-transparente */
+}
+/* Contenido de la ventana modal */
+.modal-content {
+  background-color: var(--blanco);
+  padding: 2rem;
+  border: 1px solid var(--gris);
+  width: 80%;
+  max-width: 520px;
+  border-radius: 5px;
+}
+/* Botón de cerrar */
+.closeModal {
+  color: var(--gris);
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+.closeModal:hover,
+.closeModal:focus {
+  color: var(--fondomenu);
+  text-decoration: none;
+  cursor: pointer;
 }
 /*---------------------------------------------*/
 @media screen and (max-width: 400px){

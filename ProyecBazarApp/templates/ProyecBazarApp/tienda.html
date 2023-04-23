@@ -4,6 +4,7 @@
   <div class="barra_busqueda">
     <span class="text">Tienda</span>
     {% include 'ProyecBazarApp/include/buscador.html' %}
+    <button id="abrir-modal" class="Add_produc">Agregar</button>
   </div>
 {% endblock %}
 
@@ -30,6 +31,7 @@
   {% endfor %}
     </div>
     {% include 'ProyecBazarApp/include/paginador.html' %}
+    {% include 'ProyecBazarApp/modal/AddTienda.html' %}
   {% else %}
   <strong>NO HAY REGISTROS</strong>  
   {% endif %}
