@@ -1,7 +1,6 @@
 # Librerías de Django
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.contrib import messages
 
@@ -9,72 +8,18 @@ from django.contrib import messages
 from .forms import ProductoForm
 from .models import Producto, Facturas, Boletas
 
-# Librerías para generar PDF
-import os
-import pdfkit
-import tempfile
-import webbrowser
-
 # Para trabajar con clases
 from django.contrib.auth.views import LogoutView
 from django.views.generic import ListView , CreateView
 from django.views.generic.edit import FormMixin
 from django.urls import reverse_lazy
 
-# borrar temporales al cerrar cession
+# otras librerias
 import glob
+import os
 
-def generar_pdf_boletas(queryset,camposH,camposB):
-    # Plantilla HTML
-    with open('ProyecBazarApp/templates/ProyecBazarApp/include/plantilla.html', 'r') as f:
-        contenido = f.read()
-    # Generar contenido HTML
-    contenido += '<table>'
-    contenido += '<thead><tr>'
-    for campo in camposH: # Generar los th
-        contenido += f'<th>{campo}</th>'
-    contenido += '</tr></thead><tbody>'
-    for obj in queryset: # Genera los tr
-        contenido += '<tr>'
-        for campo in camposB:
-            if campo == 'fecha_emision':
-                contenido += f'<td>{getattr(obj, campo).date()}</td>'
-            else:
-                contenido += f'<td>{getattr(obj, campo)}</td>'
-        contenido += '</tr>'
-    # Generar nombre único para el archivo temporal HTML
-    with tempfile.NamedTemporaryFile(suffix='.html', delete=False) as tmp_html:
-        tmp_html.write(contenido.encode('utf-8'))
-        tmp_html.flush()
-        # Generar PDF a partir del contenido del archivo temporal
-        pdf_content = pdfkit.from_file(tmp_html.name, False)
-        # Generar nombre único para el archivo temporal PDF
-        with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp_pdf:
-            tmp_pdf.write(pdf_content)
-            tmp_pdf.flush()
-            # Abrir la vista previa del PDF en el navegador
-            webbrowser.open_new_tab(tmp_pdf.name)
-
-
-def buscar_campos(model, campos, busqueda, busquedaF=""):
-    modelo = model.objects.all()
-    if busqueda:
-        if isinstance(model(), Producto): # Agregar los modelos aqui para busquedas no exactas
-            queries = [Q(**{campo + '__icontains': busqueda}) for campo in campos]
-        else:
-            try:
-                int(busqueda)
-            except ValueError:
-                return model.objects.none()
-            queries = [Q(**{campo: busqueda}) for campo in campos]
-        query = queries.pop()
-        for item in queries:
-            query |= item
-        modelo = modelo.filter(query).distinct()
-    elif busquedaF:
-        query = Q(fecha_emision__icontains=busquedaF) 
-        modelo = modelo.filter(query).distinct()
-    return modelo
+# imporat funciones
+from ProyecBazarApp import funcionesViews 
 
 # Create your views here.---------------------------------------------------
 
@@ -106,7 +51,7 @@ class TiendaView(FormMixin, ListView):
     def get_queryset(self):
         busqueda = self.request.GET.get('buscar')
         campos_busqueda = ['nombre_producto', 'codigo_producto', 'marca_FK__nombre_marca','categoria_FK__nombre_categoria']
-        return buscar_campos(self.model, campos_busqueda, busqueda)
+        return funcionesViews.buscar_campos(self.model, campos_busqueda, busqueda)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -153,7 +98,7 @@ class FacturaListView(ListView):
         busqueda = self.request.GET.get('buscar')
         busquedaF = self.request.GET.get('buscarFecha')
         campos_busqueda = ['id_factura', 'total_factura', 'usuario_FK__username']
-        return buscar_campos(self.model,campos_busqueda,busqueda,busquedaF)
+        return funcionesViews.buscar_campos(self.model,campos_busqueda,busqueda,busquedaF)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -168,7 +113,7 @@ class FacturaListView(ListView):
             queryset = self.get_queryset()
             camposTH = ['Folio','Total','Vendedor','Fecha de emisión']
             camposTB = ['id_factura','total_factura','usuario_FK','fecha_emision']
-            generar_pdf_boletas(queryset,camposTH,camposTB)
+            funcionesViews.generar_pdf_boletas(queryset,camposTH,camposTB)
         return self.get(self.request, *args, **kwargs)
     
 #-----------------------BOLETAS--------------------------------------------------------------------------------------
@@ -183,7 +128,7 @@ class BoletaListView(ListView):
         busqueda = self.request.GET.get('buscar')
         busquedaF = self.request.GET.get('buscarFecha')
         campos_busqueda = ['id_boleta', 'total_boleta', 'usuario_FK__username']
-        return buscar_campos(self.model,campos_busqueda,busqueda,busquedaF)
+        return funcionesViews.buscar_campos(self.model,campos_busqueda,busqueda,busquedaF)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -198,7 +143,7 @@ class BoletaListView(ListView):
             queryset = self.get_queryset()
             camposTH = ['Folio','Total','Vendedor','Fecha de emisión']
             camposTB = ['id_boleta','total_boleta','usuario_FK','fecha_emision']
-            generar_pdf_boletas(queryset,camposTH,camposTB)
+            funcionesViews.generar_pdf_boletas(queryset,camposTH,camposTB)
         return self.get(self.request, *args, **kwargs)
 
 #-------------------------------------------cambiar por Factura mas adelante ------------------------------------
