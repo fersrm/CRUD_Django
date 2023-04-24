@@ -4,6 +4,7 @@
       Swal.fire({
         titleText: "Error en el formulario",
         text: "{{ errors|join:', ' }}",
+        // text: "{{ field }}: {{ errors|join:', ' }}", por se quiere el nombre del campo
         icon: "error",
       });
     </script>
