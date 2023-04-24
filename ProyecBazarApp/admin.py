@@ -1,5 +1,8 @@
 from django.contrib import admin
 from ProyecBazarApp.models import *
+# para borrar imagenes
+from django.dispatch import receiver
+from django.db.models.signals import post_delete
 #Register your models here.
 
 admin.site.register(Rol)
@@ -26,10 +29,8 @@ class CustomUserCreationForm(UserCreationForm):
     def clean_password2(self):
         password1 = self.cleaned_data.get('password1')
         password2 = self.cleaned_data.get('password2')
-
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError('Las contraseñas no coinciden.')
-    
         return password2
 
 # esto es el formulario para editar el usuario
@@ -49,7 +50,6 @@ class CustomUserAdmin(UserAdmin):
         ('Advanced options', {
             'classes':('collapse','wide','extrapretty'),
             'fields': ('groups','user_permissions',)}),
- 
     )
     # lo que se muestra al listar usuarios
     list_display = ('username', 'first_name', 'last_name','email', 'rol_FK','is_staff')
@@ -60,15 +60,11 @@ admin.site.register(Usuario, CustomUserAdmin)
 def generate_admin(model, user_field_name):
     class CustomAdmin(admin.ModelAdmin):
         readonly_fields = ('fecha_emision',)
-
         def vendedor(self, obj):
             return getattr(obj, user_field_name)
-
         vendedor.short_description = 'Vendedor'
-
         id_field = 'id_boleta' if hasattr(model, 'id_boleta') else 'id_factura'
         list_display = (id_field, 'fecha_emision', 'total_factura' if hasattr(model, 'total_factura') else 'total_boleta', 'vendedor')
-
     return CustomAdmin
 
 admin.site.register(Facturas, generate_admin(Facturas, 'usuario_FK'))
@@ -77,35 +73,29 @@ admin.site.register(Boletas, generate_admin(Boletas, 'usuario_FK'))
 #-----------------PRODUCTOS------------------------------------------------------------------------------------------------------
 class ProducAdmin(admin.ModelAdmin):
     readonly_fields = ('usuario_FK',)
-
     def marca(self, obj):
             return getattr(obj, 'marca_FK')
-
     marca.short_description = 'Marca'
-     
     def categoria(self, obj):
             return getattr(obj, 'categoria_FK')
-
     categoria.short_description = 'Categoria'
-
     list_display = ('id_producto', 'codigo_producto', 'nombre_producto','precio_producto', 'marca','categoria')
 
 admin.site.register(Producto,ProducAdmin)
 
+@receiver(post_delete, sender=Producto)
+def eliminar_imagen_producto(sender, instance, **kwargs):
+    instance.imagen.delete(save=False)
 #-------------------------CLIENTE-----------------------------------------------------------------------------------------------
 class ClienteAdmin(admin.ModelAdmin):
-
     def comuna(self, obj):
             return getattr(obj, 'comuna_FK')
-
     comuna.short_description = 'Comuna'
-     
     list_display = ('id_cliente', 'run_cliente', 'nombre_cliente','apellido_cliente', 'comuna')
 
 admin.site.register(Cliente,ClienteAdmin)
 #-------------------------------DATOS-EMPRESA------------------------------------------------------------------------------------
 class EmpresaAdmin(admin.ModelAdmin):
-     
     list_display = ('id_datos_empresa','nombre_empresa','estado')
 
 admin.site.register(DatosEmpresa,EmpresaAdmin)
