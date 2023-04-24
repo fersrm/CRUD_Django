@@ -1,5 +1,5 @@
 {% extends "ProyecBazarApp/base.html" %}
-
+{% load static %}
 {% block head %}
   <div class="barra_busqueda">
     <span class="text">Tienda</span>
@@ -38,3 +38,6 @@
   </div>
 {%endblock %}
 
+{% block script %}
+  <script src="{% static 'ProyecBazarApp/js/modal.js' %}"></script>
+{% endblock %}
