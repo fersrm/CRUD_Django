@@ -39,6 +39,16 @@ class HomeCreateView(CreateView):
         context = self.get_context_data(form=form, error_message=error_message)
         return self.render_to_response(context)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Facturas -----------------------------
+        facturas_data = funcionesViews.total_dia(Facturas,'cantidad_facturas', 'total_factura')
+        context.update(facturas_data)
+        # Boletas ---------------------------------
+        boletas_data = funcionesViews.total_dia(Boletas,'cantidad_boletas', 'total_boleta') # total_boleta es el nombre del campo en la BBDD
+        context.update(boletas_data)
+        return context
+    
 #---------------------------TIENDA-----------------------------------------------------------------
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')

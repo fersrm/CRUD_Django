@@ -14,8 +14,8 @@
             <i class="fa-regular fa-clipboard"></i>
           </div>
           <div class="card_cuerpo">
-            <strong>$ 14567785</strong>
-            <span>34</span>
+            <strong>${{ total_factura|default:"0" }}</strong>
+            <span>{{ cantidad_facturas }}</span>
           </div>
       </a>
       <a class="card" href="{% url 'Boletas' %}">
@@ -24,8 +24,8 @@
           <i class="fa-regular fa-clipboard"></i>
         </div>
         <div class="card_cuerpo">
-          <strong>$ 14567785</strong>
-          <span>34</span>
+          <strong>${{ total_boleta|default:"0" }}</strong>
+          <span>{{ cantidad_boletas }}</span>
         </div>
     </a>
       <div class="card">

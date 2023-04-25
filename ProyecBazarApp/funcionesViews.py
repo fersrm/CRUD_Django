@@ -3,7 +3,8 @@ import pdfkit
 import tempfile
 import webbrowser
 # para filtar
-from django.db.models import Q
+from django.utils import timezone
+from django.db.models import Q,Sum
 # modelos
 from .models import Producto
 
@@ -58,3 +59,11 @@ def buscar_campos(model, campos, busqueda, busquedaF=""):
         query = Q(fecha_emision__icontains=busquedaF) 
         modelo = modelo.filter(query).distinct()
     return modelo
+
+def total_dia(model, count_field, sum_field):
+    today = timezone.now().date() #fecha actual
+    query = Q(fecha_emision__icontains=today) 
+    objects = model.objects.filter(query).distinct()
+    count = objects.count()
+    total = objects.aggregate(total=Sum(sum_field))['total']
+    return {count_field: count, sum_field: total if total is not None else 0}
