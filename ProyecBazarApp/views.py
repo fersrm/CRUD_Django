@@ -5,12 +5,12 @@ from django.utils.decorators import method_decorator
 from django.contrib import messages
 
 # Modelos y formularios
-from .forms import ProductoForm
-from .models import Producto, Facturas, Boletas
+from .forms import ProductoForm, DatosEmpresaForm
+from .models import Producto, Facturas, Boletas, DatosEmpresa
 
 # Para trabajar con clases
 from django.contrib.auth.views import LogoutView
-from django.views.generic import ListView , CreateView
+from django.views.generic import ListView , UpdateView,DetailView
 from django.views.generic.edit import FormMixin
 from django.urls import reverse_lazy
 
@@ -24,20 +24,14 @@ from ProyecBazarApp import funcionesViews
 # Create your views here.---------------------------------------------------
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-class HomeCreateView(CreateView):
-    model = Producto
-    form_class = ProductoForm
+class HomeView(UpdateView,DetailView):
+    model = DatosEmpresa
+    form_class = DatosEmpresaForm
     template_name = 'ProyecBazarApp/home.html'
-    success_url = reverse_lazy('Tienda')
+    success_url = reverse_lazy('Home')
 
-    def form_valid(self, form):
-        form.clean() # transforma a mayúsculas
-        return super().form_valid(form)
-
-    def form_invalid(self, form):
-        error_message = form.errors
-        context = self.get_context_data(form=form, error_message=error_message)
-        return self.render_to_response(context)
+    def get_object(self):
+        return self.model.objects.get(pk=1)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -48,7 +42,7 @@ class HomeCreateView(CreateView):
         boletas_data = funcionesViews.total_dia(Boletas,'cantidad_boletas', 'total_boleta') # total_boleta es el nombre del campo en la BBDD
         context.update(boletas_data)
         return context
-    
+
 #---------------------------TIENDA-----------------------------------------------------------------
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')

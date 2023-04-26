@@ -1,5 +1,5 @@
 from django import forms
-from .models import Producto
+from .models import Producto,DatosEmpresa
 
 class ProductoForm(forms.ModelForm):
     class Meta:
@@ -26,3 +26,8 @@ class ProductoForm(forms.ModelForm):
             cleaned_data['codigo_producto'] = codigo_producto.upper()
 
         return cleaned_data
+
+class DatosEmpresaForm(forms.ModelForm):
+    class Meta:
+        model = DatosEmpresa
+        fields = ['estado']

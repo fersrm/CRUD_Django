@@ -225,6 +225,7 @@
 .cartas{
   display: flex;
   justify-content: space-between;
+  margin-bottom: 2rem;
 }
 .card{
   width: 25%;
@@ -476,6 +477,24 @@ tr:nth-child(even) {
   color: var(--fondomenu);
   text-decoration: none;
   cursor: pointer;
+}
+/*--------------------HOME--------------------*/
+.formEmpresa{
+  width: 50%;
+  max-width: 300px;
+  box-shadow: var(--sombra);
+  padding: 1rem;
+  border-radius: 5px;
+}
+.formEmpresa strong{
+  display: block;
+  margin-bottom: 10px;
+}
+.formEmpresa p ,h3{
+  margin-bottom: 10px;
+}
+.formEmpresa form{
+  margin: 0;
 }
 /*---------------------------------------------*/
 @media screen and (max-width: 400px){

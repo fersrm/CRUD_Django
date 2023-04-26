@@ -38,16 +38,17 @@
         </div>
       </div>
     </div>
-    <form method="post" class="add_produc" enctype="multipart/form-data">
-      {% csrf_token %}
-      {{ form }}
-      <input type="submit" value="Agregar Producto">
-    </form>
-    {% if error_message %}
-    <div class="alert-login">{{ error_message }}</div>
-    {% endif %}
+    <div class="formEmpresa">
+      <h3>Datos de la Empresa:</h3>
+      <strong>{{object.nombre_empresa}}</strong>
+      <p>{{object.rut_empresa}}</p>
+      <p>{{object.direccion_empresa}}</p>
+      <form method="POST" class="add_produc">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Guardar">
+      </form>
+    </div>
   </div>
- 
-
   
 {%endblock %}

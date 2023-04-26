@@ -5,6 +5,7 @@ import os
 from django.dispatch import receiver
 from django.db.models.signals import pre_save
 
+from .choices import estadoDia
 # Create your models here.
 
 class Rol(models.Model):
@@ -140,7 +141,7 @@ class DatosEmpresa(models.Model):
     rut_empresa = models.CharField(max_length=15)
     direccion_empresa = models.CharField(max_length=45)
     IVA = models.IntegerField()
-    estado = models.IntegerField()
+    estado = models.IntegerField(choices=estadoDia,default=1)
 
     def __str__(self):
         return f"{self.nombre_empresa}"
