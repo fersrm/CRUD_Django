@@ -32,6 +32,11 @@ class HomeView(UpdateView,DetailView):
 
     def get_object(self):
         return self.model.objects.get(pk=1)
+    
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request,"Dia actualizado Correctamente")
+        return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
