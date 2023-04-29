@@ -55,7 +55,7 @@ class TiendaView(FormMixin, ListView):
     model = Producto
     form_class = ProductoForm
     template_name = 'ProyecBazarApp/tienda.html'
-    paginate_by = 8
+    paginate_by = 2
 
     def get_queryset(self):
         busqueda = self.request.GET.get('buscar')
