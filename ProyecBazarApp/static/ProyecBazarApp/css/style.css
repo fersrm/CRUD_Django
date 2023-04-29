@@ -443,7 +443,7 @@ tr:nth-child(even) {
   margin-left: -1px;
   line-height: 1.25;
   background-color:var(--blanco2);
-  border: 1px solid #66666660;
+  border: 1px solid #66666619;
   text-decoration: none;
 }
 .page-link:hover {
