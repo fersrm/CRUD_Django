@@ -397,11 +397,22 @@ td {
   border: 1px solid var(--fondomenu2);
   padding: 10px;
 }
-
+.tdImg{
+  padding: 3px;
+}
+.tdImg img{
+  width: 100px;
+  max-width: 150px;
+  display: block;
+  margin: auto;
+}
+.tdAcciones{
+  display: flex;
+  justify-content: space-around;
+}
 tr:nth-child(even) {
   background-color: var(--blanco2);
 }
-
 .total {
   text-align: right;
   font-weight: bold;

@@ -26,6 +26,7 @@ def generar_pdf_boletas(queryset,camposH,camposB):
             else:
                 contenido += f'<td>{getattr(obj, campo)}</td>'
         contenido += '</tr>'
+    contenido += '</tbody></table>'
     # Generar nombre único para el archivo temporal HTML
     with tempfile.NamedTemporaryFile(suffix='.html', delete=False) as tmp_html:
         tmp_html.write(contenido.encode('utf-8'))

@@ -11,25 +11,39 @@
 {% block content %}
 
   <div class="container">
-    <div class="containerIMG">
     {% if object_list %}
-    {% for producto in object_list %}
-      <div class="carta_producto">
-        <img src="{{producto.imagen.url}}" alt="{{producto.nombre_producto}}">
-        <div class="info_producto">
-            <span class="codigo">{{producto.codigo_producto}}</span>
-            <span class="nombre_producto">{{producto.nombre_producto}}</span>
-            <p>Categoria</p>
-            <span class="categoria">{{producto.categoria_FK}}</span>
-            <p>Marca</p>
-            <span class="marca">{{producto.marca_FK}}</span>
-        </div>
-        <div class="valor">
-            <strong>$ {{producto.precio_producto}}</strong>
-        </div>
-      </div>
-  {% endfor %}
-    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Imagen</th>
+          <th>Codigo</th>
+          <th>Nombre de producto</th>
+          <th>Categoria</th>
+          <th>Marca</th>
+          <th>Precio</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for producto in object_list %}
+        <tr>
+          <td class="tdImg"><img src="{{producto.imagen.url}}" alt="{{producto.nombre_producto}}"></td>
+          <td>{{producto.codigo_producto}}</td>
+          <td>{{producto.categoria_FK}}</td>
+          <td>{{producto.nombre_producto}}</td>
+          <td>{{producto.marca_FK}}</td>
+          <td>$ {{producto.precio_producto}}</td>
+          <td>
+            <div class="tdAcciones">
+              <button>Editar</button>
+              <button>Borrar</button>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
     {% include 'ProyecBazarApp/include/paginador.html' %}
     {% include 'ProyecBazarApp/modal/AddTienda.html' %}
   {% else %}

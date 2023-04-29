@@ -137,3 +137,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #agregado
 # Define la clase de usuario personalizada
 AUTH_USER_MODEL = 'ProyecBazarApp.Usuario'
+LOGIN_URL = '/login/'
