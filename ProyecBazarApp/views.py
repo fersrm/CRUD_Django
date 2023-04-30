@@ -10,7 +10,7 @@ from .models import Producto, Facturas, Boletas, DatosEmpresa
 
 # Para trabajar con clases
 from django.contrib.auth.views import LogoutView
-from django.views.generic import ListView , UpdateView,DetailView
+from django.views.generic import ListView , UpdateView,DetailView,DeleteView
 from django.views.generic.edit import FormMixin
 from django.urls import reverse_lazy
 
@@ -94,6 +94,16 @@ class TiendaView(FormMixin, ListView):
 
     def get_success_url(self):
         return reverse_lazy('Tienda')
+ 
+#-----------------------------------------------------------------------
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class TiendaEditView(UpdateView):
+    model = Producto
+    form_class = ProductoForm
+    template_name = 'ProyecBazarApp/modal/tienda_edit.html'
+    success_url = reverse_lazy('Tienda')
+
+
 #----------------------INFORMES-----------------------------------------------
 #----------------------FACTURAS----------------------------------------------
 
