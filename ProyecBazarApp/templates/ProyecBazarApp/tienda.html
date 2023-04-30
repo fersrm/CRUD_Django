@@ -4,7 +4,7 @@
   <div class="barra_busqueda">
     <span class="text">Tienda</span>
     {% include 'ProyecBazarApp/include/buscador.html' %}
-    <button id="abrir-modal" class="Add_produc">Agregar</button>
+    <button id="abrir-modal" class="Add_produc" onclick="abrir_modal_creacion('{% url 'agregar_prodcuto' %}')">Agregar</button>
   </div>
 {% endblock %}
 
@@ -44,7 +44,8 @@
     </table>
 
     {% include 'ProyecBazarApp/include/paginador.html' %}
-    {% include 'ProyecBazarApp/modal/AddTienda.html' %}
+
+    <div id="agregar-producto" class="modal"></div>
 
     <div id="edicion" class="modalEditar"></div>
 
@@ -64,6 +65,18 @@
         if (this.readyState == 4 && this.status == 200) {
           document.getElementById("edicion").innerHTML = this.responseText;
           document.getElementById("edicion").style.display = "block";
+        }
+      };
+      xhttp.open("GET", url, true);
+      xhttp.send();
+    }
+
+    function abrir_modal_creacion(url){
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("agregar-producto").innerHTML = this.responseText;
+          document.getElementById("agregar-producto").style.display = "block";
         }
       };
       xhttp.open("GET", url, true);

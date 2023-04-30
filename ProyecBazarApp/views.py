@@ -10,7 +10,7 @@ from .models import Producto, Facturas, Boletas, DatosEmpresa
 
 # Para trabajar con clases
 from django.contrib.auth.views import LogoutView
-from django.views.generic import ListView , UpdateView,DetailView,DeleteView
+from django.views.generic import ListView , UpdateView,DetailView,DeleteView,CreateView
 from django.views.generic.edit import FormMixin
 from django.urls import reverse_lazy
 
@@ -51,9 +51,8 @@ class HomeView(UpdateView,DetailView):
 #---------------------------TIENDA-----------------------------------------------------------------
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-class TiendaView(FormMixin, ListView):
+class ListarProductoView(ListView):
     model = Producto
-    form_class = ProductoForm
     template_name = 'ProyecBazarApp/tienda.html'
     paginate_by = 2
 
@@ -67,13 +66,18 @@ class TiendaView(FormMixin, ListView):
         paginator = Paginator(context['object_list'], self.paginate_by)
         page = self.request.GET.get('page')
         context['object_list'] = paginator.get_page(page)
-        context['form'] = self.get_form()
         return context
+#--------------------------------------------------------
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class AgregarProductoView(CreateView):
+    model = Producto
+    form_class = ProductoForm
+    template_name = 'ProyecBazarApp/modal/AddTienda.html'
 
     def form_valid(self, form):
         form.clean()
         form.save()
-        messages.success(self.request,"Producto agregado correctamente")
+        messages.success(self.request, "Producto agregado correctamente")
         return super().form_valid(form)
 
     def form_invalid(self, form):
@@ -83,21 +87,11 @@ class TiendaView(FormMixin, ListView):
                 messages.error(self.request, f"{field}: {error}")
         return super().form_invalid(form)
 
-
-    def post(self, *args, **kwargs):
-        self.object_list = self.get_queryset()
-        form = self.get_form()
-        if form.is_valid():
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
-
     def get_success_url(self):
         return reverse_lazy('Tienda')
- 
 #-----------------------------------------------------------------------
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-class TiendaEditView(UpdateView):
+class EditarProductoView(UpdateView):
     model = Producto
     form_class = ProductoForm
     template_name = 'ProyecBazarApp/modal/tienda_edit.html'

@@ -498,12 +498,12 @@ tr:nth-child(even) {
   background-color: var(--fondomenu2);
 }
 /*------------MODAL-------------------------------*/
-.barra_busqueda .Add_produc{
+/* .barra_busqueda .Add_produc{
   border-radius: 5px;
   margin-left: 5rem;
 }
 .modal {
-  display: none; 
+  display: none;
   justify-content: center;
   align-items: center;
   position: fixed; 
@@ -513,9 +513,8 @@ tr:nth-child(even) {
   width: 100%; 
   height: 100%; 
   overflow: hidden; 
-  background-color: rgba(0,0,0,0.4); /* Color de fondo oscuro y semi-transparente */
+  background-color: rgba(0,0,0,0.4);
 }
-/* Contenido de la ventana modal */
 .modal-content {
   background-color: var(--blanco);
   padding: 2rem;
@@ -524,7 +523,6 @@ tr:nth-child(even) {
   max-width: 520px;
   border-radius: 5px;
 }
-/* Botón de cerrar */
 .closeModal {
   color: var(--gris);
   float: right;
@@ -536,7 +534,7 @@ tr:nth-child(even) {
   color: var(--fondomenu);
   text-decoration: none;
   cursor: pointer;
-}
+} */
 /*--------------------HOME--------------------*/
 .formEmpresa{
   width: 50%;
