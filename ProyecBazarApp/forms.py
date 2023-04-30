@@ -31,3 +31,24 @@ class DatosEmpresaForm(forms.ModelForm):
     class Meta:
         model = DatosEmpresa
         fields = ['estado']
+
+
+class ProductoFormEditar(forms.ModelForm):
+    class Meta:
+        model = Producto
+        fields = ['nombre_producto','precio_producto','imagen','marca_FK','categoria_FK']
+        labels = {
+            'marca_FK': 'Marca',
+            'categoria_FK': 'Categoria'
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        nombre_producto = cleaned_data.get('nombre_producto')
+        codigo_producto = cleaned_data.get('codigo_producto')
+
+        if nombre_producto and codigo_producto:
+            cleaned_data['nombre_producto'] = nombre_producto.upper()
+            cleaned_data['codigo_producto'] = codigo_producto.upper()
+
+        return cleaned_data

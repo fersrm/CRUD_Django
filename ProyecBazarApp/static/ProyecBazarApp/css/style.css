@@ -9,6 +9,8 @@
   --valor:#ff0000;
   --sombra:0 0 5px 3px #2524243b;
   --gris: #888888;
+  --verde1:#69b399;
+  --verde2:#37705c;
 }
 *{
   margin: 0;
@@ -486,7 +488,7 @@ tr:nth-child(even) {
   margin-top: 1rem;
   border: none;
 }
-.generadorPDF button{
+button{
   border: none;
   padding: 10px;
   background-color: var(--fondomenu);
@@ -494,11 +496,11 @@ tr:nth-child(even) {
   cursor: pointer;
   border-radius: 5px;
 }
-.generadorPDF button:hover{
+button:hover{
   background-color: var(--fondomenu2);
 }
 /*------------MODAL-------------------------------*/
-/* .barra_busqueda .Add_produc{
+.barra_busqueda .Add_produc{
   border-radius: 5px;
   margin-left: 5rem;
 }
@@ -507,7 +509,7 @@ tr:nth-child(even) {
   justify-content: center;
   align-items: center;
   position: fixed; 
-  z-index: 1;
+  z-index: 10;
   left: 0;
   top: 0;
   width: 100%; 
@@ -534,7 +536,11 @@ tr:nth-child(even) {
   color: var(--fondomenu);
   text-decoration: none;
   cursor: pointer;
-} */
+}
+.formImg{
+  width: 100%;
+}
+
 /*--------------------HOME--------------------*/
 .formEmpresa{
   width: 50%;
@@ -552,6 +558,13 @@ tr:nth-child(even) {
 }
 .formEmpresa form{
   margin: 0;
+}
+/*----------------BOTONES-----------------------*/
+.editar{
+  background-color: var(--verde1);
+}
+.editar:hover{
+  background-color: var(--verde2);
 }
 /*---------------------------------------------*/
 @media screen and (max-width: 400px){

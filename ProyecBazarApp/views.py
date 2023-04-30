@@ -5,13 +5,12 @@ from django.utils.decorators import method_decorator
 from django.contrib import messages
 
 # Modelos y formularios
-from .forms import ProductoForm, DatosEmpresaForm
+from .forms import ProductoForm, DatosEmpresaForm, ProductoFormEditar
 from .models import Producto, Facturas, Boletas, DatosEmpresa
 
 # Para trabajar con clases
 from django.contrib.auth.views import LogoutView
 from django.views.generic import ListView , UpdateView,DetailView,DeleteView,CreateView
-from django.views.generic.edit import FormMixin
 from django.urls import reverse_lazy
 
 # otras librerias
@@ -93,10 +92,24 @@ class AgregarProductoView(CreateView):
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 class EditarProductoView(UpdateView):
     model = Producto
-    form_class = ProductoForm
+    form_class = ProductoFormEditar
     template_name = 'ProyecBazarApp/modal/tienda_edit.html'
-    success_url = reverse_lazy('Tienda')
 
+    def form_valid(self, form):
+        form.clean()
+        form.save()
+        messages.success(self.request, "Producto Editado correctamente")
+        return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        messages.error(self.request, 'Error en el formulario')
+        for field, errors in form.errors.items():
+            for error in errors:
+                messages.error(self.request, f"{field}: {error}")
+        return super().form_invalid(form)
+    
+    def get_success_url(self):
+        return reverse_lazy('Tienda')
 
 #----------------------INFORMES-----------------------------------------------
 #----------------------FACTURAS----------------------------------------------

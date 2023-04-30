@@ -35,7 +35,7 @@
           <td>$ {{producto.precio_producto}}</td>
           <td>
             <div class="tdAcciones">
-              <button onclick="abrir_modal_edicion('{% url 'editar_producto' producto.id_producto %}')" >Editar</button>
+              <button class="editar" onclick="abrir_modal_edicion('{% url 'editar_producto' producto.id_producto %}')" >Editar</button>
             </div>
           </td>
         </tr>
@@ -47,7 +47,7 @@
 
     <div id="agregar-producto" class="modal"></div>
 
-    <div id="edicion" class="modalEditar"></div>
+    <div id="edicion" class="modal"></div>
 
   {% else %}
   <strong>NO HAY REGISTROS</strong>  
@@ -57,31 +57,4 @@
 
 {% block script %}
   <script src="{% static 'ProyecBazarApp/js/modal.js' %}"></script>
-  
-  <script type="text/javascript">
-    function abrir_modal_edicion(url){
-      var xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-          document.getElementById("edicion").innerHTML = this.responseText;
-          document.getElementById("edicion").style.display = "block";
-        }
-      };
-      xhttp.open("GET", url, true);
-      xhttp.send();
-    }
-
-    function abrir_modal_creacion(url){
-      var xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-          document.getElementById("agregar-producto").innerHTML = this.responseText;
-          document.getElementById("agregar-producto").style.display = "block";
-        }
-      };
-      xhttp.open("GET", url, true);
-      xhttp.send();
-    }
-
-  </script>
 {% endblock %}

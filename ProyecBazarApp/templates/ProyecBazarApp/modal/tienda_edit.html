@@ -1,13 +1,15 @@
 
   <div class="modal-content">
-    <span class="closeModal" id="cerrar-modal">&times;</span>
+    <span class="closeModal" onclick="cerrar_modal_editar()">&times;</span>
     <h2>Agregar Producto</h2>
+    
     <form action="{% url 'editar_producto' object.id_producto %}" method="post" class="add_produc" enctype="multipart/form-data" id="myForm">
+      <img class="formImg" src="{{ form.instance.imagen.url }}" alt="">
       {% csrf_token %}
-      {{ form.as_p }}
+      {{ form }}
       <input type="submit" value="Editar Producto">
     </form>
     {% if error_message %}
     <div class="alert-login">{{ error_message }}</div>
     {% endif %}
-  </div>
+  </div>  
