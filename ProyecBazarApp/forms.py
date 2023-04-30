@@ -36,10 +36,12 @@ class DatosEmpresaForm(forms.ModelForm):
 class ProductoFormEditar(forms.ModelForm):
     class Meta:
         model = Producto
-        fields = ['nombre_producto','precio_producto','imagen','marca_FK','categoria_FK']
+        fields = ['nombre_producto', 'precio_producto', 'imagen', 'marca_FK', 'categoria_FK']
         labels = {
+            'nombre_producto': 'Nombre del producto',
+            'precio_producto': 'Precio del producto',
             'marca_FK': 'Marca',
-            'categoria_FK': 'Categoria'
+            'categoria_FK': 'Categoría'
         }
 
     def clean(self):

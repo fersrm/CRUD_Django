@@ -4,9 +4,30 @@
     <h2>Agregar Producto</h2>
     
     <form action="{% url 'editar_producto' object.id_producto %}" method="post" class="add_produc" enctype="multipart/form-data" id="myForm">
-      <img class="formImg" src="{{ form.instance.imagen.url }}" alt="">
       {% csrf_token %}
-      {{ form }}
+      <div>
+        {{ form.nombre_producto.label_tag }}
+        {{ form.nombre_producto }}
+      </div>
+      <div>
+        {{ form.precio_producto.label_tag }}
+        {{ form.precio_producto }}
+      </div>
+      <div class="hidden">
+        {{ form.imagen.label_tag }}
+        {% if form.instance.imagen %}
+        <div class="formImg">
+          <img src="{{ form.instance.imagen.url }}" alt="{{ form.instance.nombre_producto }}">
+        </div>
+        {% endif %}
+        {{ form.imagen }}
+      </div>
+      <div>
+        {{ form.marca_FK.label_tag }}
+        {{ form.marca_FK }}
+        {{ form.categoria_FK.label_tag }}
+        {{ form.categoria_FK }}
+      </div>
       <input type="submit" value="Editar Producto">
     </form>
     {% if error_message %}
