@@ -1,7 +1,7 @@
 
   <div class="modal-content">
     <span class="closeModal" onclick="cerrar_modal_editar()">&times;</span>
-    <h2>Agregar Producto</h2>
+    <h2>Editar Producto</h2>
     
     <form action="{% url 'editar_producto' object.id_producto %}" method="post" class="add_produc" enctype="multipart/form-data" id="myForm">
       {% csrf_token %}
