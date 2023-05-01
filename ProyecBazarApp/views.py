@@ -7,7 +7,7 @@ from django.shortcuts import redirect
 
 # Modelos y formularios
 from .forms import ProductoForm, DatosEmpresaForm, ProductoFormEditar
-from .models import Producto, Facturas, Boletas, DatosEmpresa
+from .models import Producto, Facturas, Boletas, DatosEmpresa,DetalleFacturas
 
 # Para trabajar con clases
 from django.contrib.auth.views import LogoutView
@@ -187,7 +187,8 @@ class BoletaListView(ListView):
 #-------------------------------------------cambiar por Factura mas adelante ------------------------------------
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 class PagosListView(ListView):
-    pass
+    model = DetalleFacturas
+    template_name = 'ProyecBazarApp/pagos.html'
 
 #-----------------------SALIR------------------------------------------------------------------------------------------------
 
