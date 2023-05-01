@@ -41,3 +41,21 @@ function abrir_modal_creacion(url){
   xhttp.open("GET", url, true);
   xhttp.send();
 }
+
+//mensaje
+function eliminar_producto(id){
+  Swal.fire({
+    titleText:"¿Estas seguro?",
+    text:"Estas accion no se puede desacer",
+    icon:"question", 
+    showCancelButton:true,
+    cancelButtonText:"No, Cancelar",
+    confirmButtonText:"Si, Eliminar",
+    confirmButtonColor:"#dc3545"
+  })
+  .then(function(result){
+    if(result.isConfirmed){
+      window.location.href = "/tienda/borrar/"+id+"/";
+    }
+  })
+}

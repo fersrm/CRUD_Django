@@ -46,34 +46,15 @@
 
     {% include 'ProyecBazarApp/include/paginador.html' %}
 
-    <div id="agregar-producto" class="modal"></div>
-
     <div id="edicion" class="modal"></div>
 
   {% else %}
   <strong>NO HAY REGISTROS</strong>  
+  <div id="agregar-producto" class="modal"></div>
   {% endif %}
   </div>
 {%endblock %}
 
 {% block script %}
   <script src="{% static 'ProyecBazarApp/js/modal.js' %}"></script>
-  <script>
-    function eliminar_producto(id){
-      Swal.fire({
-        titleText:"¿Estas seguro?",
-        text:"Estas accion no se puede desacer",
-        icon:"question", 
-        showCancelButton:true,
-        cancelButtonText:"No, Cancelar",
-        confirmButtonText:"Si, Eliminar",
-        confirmButtonColor:"#dc3545"
-      })
-      .then(function(result){
-        if(result.isConfirmed){
-          window.location.href = "/tienda/borrar/"+id+"/";
-        }
-      })
-    }
-  </script>
 {% endblock %}
