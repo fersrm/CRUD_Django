@@ -1,4 +1,4 @@
-let modalAgregar = document.getElementById("agregar-producto");
+let modalAgregar = document.getElementById("agregar");
 let modalEditar = document.getElementById("edicion");
 // Cuando el usuario hace clic en el botón de cerrar, ocultar la ventana modal
 function cerrar_modal_add() {
@@ -19,7 +19,7 @@ window.onclick = function(event) {
 //----------------------------------------------------------
 
 function abrir_modal_edicion(url){
-  var xhttp = new XMLHttpRequest();
+  let xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("edicion").innerHTML = this.responseText;
@@ -28,16 +28,16 @@ function abrir_modal_edicion(url){
   };
   xhttp.open("GET", url, true);
   xhttp.send();
-}
+};
 
 function abrir_modal_creacion(url){
-  var xhttp = new XMLHttpRequest();
+  let xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("agregar-producto").innerHTML = this.responseText;
-      document.getElementById("agregar-producto").style.display = "flex";
+      document.getElementById("agregar").innerHTML = this.responseText;
+      document.getElementById("agregar").style.display = "flex";
     }
   };
   xhttp.open("GET", url, true);
   xhttp.send();
-}
+};
