@@ -36,6 +36,7 @@
           <td>
             <div class="tdAcciones">
               <button class="editar" onclick="abrir_modal_edicion('{% url 'editar_producto' producto.id_producto %}')" >Editar</button>
+              <button class="borrar" onclick="eliminar_producto({{producto.id_producto}})" >Borrar</button>
             </div>
           </td>
         </tr>
@@ -57,4 +58,22 @@
 
 {% block script %}
   <script src="{% static 'ProyecBazarApp/js/modal.js' %}"></script>
+  <script>
+    function eliminar_producto(id){
+      Swal.fire({
+        titleText:"¿Estas seguro?",
+        text:"Estas accion no se puede desacer",
+        icon:"question", 
+        showCancelButton:true,
+        cancelButtonText:"No, Cancelar",
+        confirmButtonText:"Si, Eliminar",
+        confirmButtonColor:"#dc3545"
+      })
+      .then(function(result){
+        if(result.isConfirmed){
+          window.location.href = "/tienda/borrar/"+id+"/";
+        }
+      })
+    }
+  </script>
 {% endblock %}

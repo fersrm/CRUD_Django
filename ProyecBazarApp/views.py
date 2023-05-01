@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.utils.decorators import method_decorator
 from django.contrib import messages
+from django.shortcuts import redirect
 
 # Modelos y formularios
 from .forms import ProductoForm, DatosEmpresaForm, ProductoFormEditar
@@ -47,7 +48,7 @@ class HomeView(UpdateView,DetailView):
         context.update(boletas_data)
         return context
 
-#---------------------------TIENDA-----------------------------------------------------------------
+#---------------------------TIENDA----CRUD------------------------------------------------------------
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 class ListarProductoView(ListView):
@@ -110,6 +111,17 @@ class EditarProductoView(UpdateView):
     
     def get_success_url(self):
         return reverse_lazy('Tienda')
+#------------------------------------------------------------------------
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class EliminarProductoView(DeleteView):
+    model = Producto
+    success_url = reverse_lazy('Tienda')
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        messages.success(self.request, "Producto eliminado correctamente")
+        self.object.delete()
+        return redirect(self.get_success_url())
 
 #----------------------INFORMES-----------------------------------------------
 #----------------------FACTURAS----------------------------------------------
