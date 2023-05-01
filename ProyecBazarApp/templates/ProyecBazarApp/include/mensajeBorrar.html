@@ -1,8 +1,8 @@
   <script>
-    function eliminar_producto(id){
+    function eliminar_producto(id,nombre){
       Swal.fire({
-          titleText:"¿Estas seguro?",
-          text:"Estas accion no se puede desacer",
+          titleText:"¿Estas seguro que eliminar?",
+          text:nombre,
           icon:"question", 
           showCancelButton:true,
           cancelButtonText:"No, Cancelar",

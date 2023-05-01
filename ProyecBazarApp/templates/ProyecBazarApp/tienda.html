@@ -36,7 +36,7 @@
           <td>
             <div class="tdAcciones">
               <button class="editar" onclick="abrir_modal_edicion('{% url 'editar_producto' producto.id_producto %}')" >Editar</button>
-              <button class="borrar" onclick="eliminar_producto({{producto.id_producto}})">Borrar</button>
+              <button class="borrar" onclick="eliminar_producto({{producto.id_producto}},'{{producto.nombre_producto}}')">Borrar</button>
             </div>
           </td>
         </tr>

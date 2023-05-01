@@ -7,6 +7,7 @@
   --fondoPerfil:#1d1b31;
   --fondomenu2:#4c4786;
   --valor:#ff0000;
+  --valor2:#c25d5d;
   --sombra:0 0 5px 3px #2524243b;
   --gris: #888888;
   --verde1:#69b399;
@@ -230,7 +231,7 @@
   margin-bottom: 2rem;
 }
 .card{
-  width: 25%;
+  width: 24%;
   min-width: 140px;
   height: auto;
   padding: 1rem;
@@ -401,8 +402,9 @@
 }
 /*-----------------------TABLA--------------------------*/
 table {
-  width: 100%;
+  width: 90%;
   border-collapse: collapse;
+  margin: auto;
   margin-bottom: 30px;
 }
 
@@ -413,6 +415,7 @@ th {
   border: 1px solid var(--fondomenu);
   color: var(--blanco);
   text-align: center;
+  font-size: 12px;
 }
 
 td {
@@ -505,6 +508,8 @@ tr:nth-child(even) {
 }
 /*-----------------------*/
 .generadorPDF{
+  margin: auto;
+  width: 90%;
   margin-top: 1rem;
   border: none;
 }
@@ -581,6 +586,12 @@ button:hover{
 }
 .editar:hover{
   background-color: var(--verde2);
+}
+.borrar{
+  background-color: var(--valor2);
+}
+.borrar:hover{
+  background-color: var(--valor);
 }
 /*---------------------------------------------*/
 @media screen and (max-width: 400px){
