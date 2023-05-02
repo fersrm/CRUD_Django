@@ -147,7 +147,7 @@ if not DEBUG:    # Tell Django to copy statics to the `staticfiles` directory
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 #agregado
 MEDIA_URL = 'media/'
-MEDIA_ROOT = os.path.join(os.environ.get('BASE_DIR'), 'ProyecBazarApp/media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'ProyecBazarApp/media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
