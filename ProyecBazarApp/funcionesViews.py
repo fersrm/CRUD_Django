@@ -8,9 +8,18 @@ from django.db.models import Q,Sum
 # modelos
 from .models import Producto
 
+import os
+
+# Obtener la ruta base de la aplicación
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Crear la ruta a la plantilla HTML utilizando la ruta base
+ruta_plantilla = os.path.join(BASE_DIR, 'ProyecBazarApp', 'templates', 'ProyecBazarApp', 'include', 'plantilla.html')
+
+
 def generar_pdf_boletas(queryset,camposH,camposB):
     # Plantilla HTML
-    with open('ProyecBazarApp/templates/ProyecBazarApp/include/plantilla.html', 'r') as f:
+    with open(ruta_plantilla, 'r') as f:
         contenido = f.read()
     # Generar contenido HTML
     contenido += '<table>'
