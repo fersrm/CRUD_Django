@@ -227,6 +227,7 @@
 /*-------------INICIO----------------*/
 .cartas{
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   margin-bottom: 2rem;
 }
@@ -254,6 +255,18 @@
 }
 .card_cuerpo{
   margin-top: 0.5rem;
+}
+@media (max-width: 1000px) {
+  .card {
+    width: 49%;
+    margin-bottom: 1rem;
+  }
+}
+@media (max-width: 500px) {
+  .card {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
 }
 /*-----------formulario agregar producto------------*/
 .add_produc{
@@ -370,6 +383,7 @@
 /*---------------------------------BUSCADOR----------------------------------*/
 .barra_busqueda{
   display: flex;
+  flex-wrap: wrap;
 }
 .barra_busqueda form{
   margin: 0;
@@ -400,9 +414,11 @@
 .calendario{
   margin-left: 4rem;
 }
+
 /*-----------------------TABLA--------------------------*/
 table {
   width: 90%;
+  min-width: 1000px;
   border-collapse: collapse;
   margin: auto;
   margin-bottom: 30px;
@@ -441,6 +457,12 @@ tr:nth-child(even) {
 .total {
   text-align: right;
   font-weight: bold;
+}
+@media (max-width: 1000px) {
+  .container {
+    overflow-x: auto;
+    padding:3rem 0.5rem 0.5rem 0.5rem;
+  }
 }
 /*-----------Paginador----------*/
 .d-flex {
@@ -534,7 +556,7 @@ button:hover{
   justify-content: center;
   align-items: center;
   position: fixed; 
-  z-index: 10;
+  z-index: 200;
   left: 0;
   top: 0;
   width: 100%; 
@@ -564,8 +586,8 @@ button:hover{
 }
 /*--------------------HOME--------------------*/
 .formEmpresa{
-  width: 50%;
-  max-width: 300px;
+  width: 100%;
+  max-width: 400px;
   box-shadow: var(--sombra);
   padding: 1rem;
   border-radius: 5px;
@@ -580,6 +602,8 @@ button:hover{
 .formEmpresa form{
   margin: 0;
 }
+
+
 /*----------------BOTONES-----------------------*/
 .editar{
   background-color: var(--verde1);
@@ -594,15 +618,15 @@ button:hover{
   background-color: var(--valor);
 }
 /*---------------------------------------------*/
-@media screen and (max-width: 400px){
+@media screen and (max-width: 450px){
   .sidebar{
-    width: 240px;
+    width: 100%;
   }
   .sidebar.close{
     width: 78px;
   }
   .sidebar .profile-details{
-    width: 240px;
+    width: 100%;
   }
   .sidebar.close .profile-details{
     background: none;
@@ -610,12 +634,41 @@ button:hover{
   .sidebar.close .profile-details{
     width: 78px;
   }
-  .home-section{
-    left: 240px;
-    width: calc(100% - 240px);
+  .home-section .home-content .bx-menu{
+    z-index: 1000;
   }
-  .sidebar.close ~ .home-section{
-    left: 78px;
-    width: calc(100% - 78px);
+  .hambur.activo .close{
+    color: var(--blanco);
+    margin-left: 3rem;
+  }
+  .none{
+    display: none;
   }
 }
+@media (max-width: 650px) {
+.modal-content{
+  width: 95%;
+}
+.modal-content select{
+  width: 50%;
+  margin-left: 40px;
+  margin-right: 155px;
+}
+}
+@media (max-width: 600px) {
+  form.buscador {
+    width: 100%;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    margin-left: 1px
+  }
+  form.buscador input{
+    width: 100%;
+  }
+  .Add_produc.agregar{
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+

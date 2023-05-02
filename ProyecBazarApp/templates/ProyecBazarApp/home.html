@@ -1,12 +1,12 @@
 {% extends "ProyecBazarApp/base.html" %}
 
 {% block head %}
-  <span class="text">Dashboard Bazar</span>
+  <span class="text" id="encabezado">Dashboard Bazar</span>
 {% endblock %}
 
 {% block content %}
 
-  <div class="container">
+  <div class="container" id="contenido">
     <div class="cartas">
       <a class="card" href="{% url 'Facturas' %}">
           <div class="card_titulo">
