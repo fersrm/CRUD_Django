@@ -1,7 +1,7 @@
 {% extends "ProyecBazarApp/base.html" %}
 {% load static %}
 {% block head %}
-  <div class="barra_busqueda">
+  <div class="barra_busqueda" id="encabezado">
     <span class="text">Tienda</span>
     {% include 'ProyecBazarApp/include/buscador.html' %}
     <button id="abrir-modal" class="Add_produc agregar" onclick="abrir_modal_creacion('{% url 'agregar_prodcuto' %}')">Agregar</button>
