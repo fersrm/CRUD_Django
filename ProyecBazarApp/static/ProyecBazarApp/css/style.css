@@ -642,7 +642,7 @@ button:hover{
     margin-left: 3rem;
   }
   .none{
-    display: none;
+    overflow: hidden;
   }
 }
 @media (max-width: 650px) {

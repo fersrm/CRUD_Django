@@ -1,7 +1,7 @@
 {% extends "ProyecBazarApp/base.html" %}
 
 {% block head %}
-  <div class="barra_busqueda" id="encabezado">
+  <div class="barra_busqueda">
     <span class="text">Pagos</span>
     {% include 'ProyecBazarApp/include/buscador.html' %}
     {% include 'ProyecBazarApp/include/buscadorFecha.html' %}
@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container" id="contenido">
+<div class="container">
   {% if object_list %}
   <table>
     <thead>
